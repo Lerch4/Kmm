@@ -81,7 +81,6 @@ def make_smart_user_generated_item(
         content_list = session._search(content_type, search_params).content
 
 
-
         content_id_list = make_id_list(content_list)
     
 
@@ -186,7 +185,7 @@ def _update_existing_item(session, item_type, data, item = None, item_id = None,
             current_id_list = item.series_ids
             
         case _:
-            raise Exception('Incopatable item type')
+            raise Exception('Incompatable item type')
 
     item_id = item.id
     id_list: list = data[data_key]
