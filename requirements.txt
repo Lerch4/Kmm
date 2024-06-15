@@ -1,0 +1,4 @@
+# komgapy
+pillow
+# PyYAML
+
