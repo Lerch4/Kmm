@@ -24,36 +24,6 @@ def add_readlist_poster(session, readlist, readlist_name, readlist_catagory):
     return _add_item_poster(session, 'readlist', item=readlist, item_name=readlist_name, item_catagory=readlist_catagory)
 
 
-# def make_smart_readlist_old(
-#     session,
-#     readlist_name: str,
-#     search_params: dict = None,
-#     book_search_params: dict = None,
-#     readlist_prefix: str = None,
-#     readlist_catagory: str = None,
-#     book_ids: list = None,
-#     blacklisted_book_ids: list = None,
-#     blacklisted_search_params: dict = None,
-#     ordered = False,
-#     overwrite = False
-#     ):
-
-#     make_smart_user_generated_item_new(
-#         session,
-#         'readlists',
-#         readlist_name,        
-#         search_params,
-#         book_search_params,
-#         readlist_prefix,
-#         readlist_catagory,
-#         book_ids,
-#         blacklisted_book_ids,
-#         blacklisted_search_params,
-#         ordered,
-#         overwrite
-#         )
-
-
 def make_smart_readlist(
         session,
         readlist_name: str,
@@ -88,6 +58,7 @@ def make_smart_readlist(
         # trim item name
         readlist_name = readlist_name.strip()
 
+        # set default search_params
         if series_search_params == {} and book_search_params == {}:
             series_search_params = {'search': f'"{readlist_name}"'}
 
@@ -95,7 +66,10 @@ def make_smart_readlist(
             book_search_params = {'search': f'"{readlist_name}"'}
     
 
+        # initialize list of books to be added
         book_list = []
+
+        # if there are book search params search for them 
         if len(book_search_params)>0:
 
             if 'unpaged' not in book_search_params:
@@ -103,7 +77,7 @@ def make_smart_readlist(
 
             book_list.extend(session._search('books', book_search_params).content)
 
-
+        # if there are series search params search for them 
         if len(series_search_params)>0:
 
             if 'unpaged' not in series_search_params:
@@ -115,7 +89,7 @@ def make_smart_readlist(
                     for book in session.books_in_series(id).content:
                         book_list.append(book)
 
-
+        # add searched book ids to book id list
         if book_list != []:
             book_ids.extend(make_id_list(book_list)) 
 
@@ -135,11 +109,13 @@ def make_smart_readlist(
         if blacklisted_book_ids != []:
             remove_blacklisted_content(book_ids, blacklisted_book_ids)
 
+        # determine prefix
         readlist_prefix = make_prefix(readlist_prefix, readlist_catagory, readlist_catagories)
 
         # post collection and return collection data
         readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
 
+        # if response was to able to be converted print response
         if isinstance(readlist, Response):
             print(readlist.text)
 
