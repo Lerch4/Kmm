@@ -8,35 +8,11 @@ from komgapy import(
 
 
 # Print Functions --------------------------------------------------------------------------------------------------------------
-def print_collection_input(collection_name, search_params, collection_prefix, collection_catagory, series_ids, blacklisted_series, blacklisted_search_params, ordered, overwrite):
-        print(f'''
-----------------------------------------------------------------------------------
-                           New Collection - User Inputs
-----------------------------------------------------------------------------------
 
-collection_name: {collection_name}
-
-search_params: {str(search_params)}
-
-collection_prefix: {collection_prefix}
-
-collection_catagory: {collection_catagory}
-
-series_ids: {str(series_ids)}
-
-blacklisted_series: {str(blacklisted_series)}
-
-blacklisted_search_params: {str(blacklisted_search_params)}
-
-ordered: {str(ordered)}
-
-overwrite: {str(overwrite)}
-
-----------------------------------------------------------------------------------
-'''
-    )
-
-def print_has_poster_asset(has_poster_asset):
+def print_has_poster_asset(has_poster_asset: bool) -> None:
+    '''
+    Print if poster asset is present
+    '''
 
     if has_poster_asset == True:
         poster_asset_text = 'Has Poster Asset'
@@ -47,14 +23,20 @@ def print_has_poster_asset(has_poster_asset):
 
 
 
-def print_heading(heading_text):
+def print_heading(text: str) -> None:
+    '''
+    Prints text as heading
+    '''
     print(f'''
---------------------------------------
-            {heading_text}
---------------------------------------
+----------------------------------------
+{text.center(40)}
+----------------------------------------
 ''')
 
-def print_heading_from_item_type(item_type):
+def print_heading_from_item_type(item_type: str) -> None:
+    '''
+    Print item type as heading
+    '''
     match item_type:
         case 'collections': 
               print_heading('Collection')
@@ -63,6 +45,9 @@ def print_heading_from_item_type(item_type):
 
 
 def print_item_data(item):
+    '''
+    Prints name, id, and content length for an item
+    '''
     if isinstance(item, KomgaCollection):
             item_type = 'Collection'
             content_type = 'Series'
