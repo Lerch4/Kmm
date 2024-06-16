@@ -1,3 +1,4 @@
+import json
 from komgapy import(
       KomgaCollection,
       KomgaReadlist,
@@ -76,3 +77,14 @@ def print_item_data(item):
 
 
 
+def print_input_params(input_params):
+    # print(f'Input Parameters: {json.dumps(input_params, indent=1)}\n')
+    print('Input Parameters:')
+    for k,v in input_params.items():
+         print(f'{k}: {v}')
+    print()
+
+def print_start_new_group(item_type, input_params):
+     print_heading_from_item_type(item_type)
+     print_input_params(input_params)
+     

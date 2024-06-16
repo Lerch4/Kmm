@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, json
 
 from config import smart_collections, komga_url, user, password, collection_catagories, smart_readlists, readlist_catagories
 
@@ -6,6 +6,13 @@ from config import smart_collections, komga_url, user, password, collection_cata
 from komgapy import KomgaSession
 from smart_groups.smart_collections import make_smart_collection, check_key_exists
 from smart_groups.smart_readlists import make_smart_readlist
+from smart_groups.print_outputs import(
+    print_item_data,
+    print_heading_from_item_type,
+    print_has_poster_asset,
+    print_input_params,
+    print_start_new_group
+)
 
 
 asset_dir = os.path.join(os.path.dirname(__file__), 'assets')
@@ -15,6 +22,9 @@ def run_smart_collections(session: KomgaSession, asset_dir=asset_dir) -> None:
     Make collection for every entry in smart_collections in config file
     '''
     for collection in smart_collections:
+
+        print_start_new_group('collections', collection)
+
         make_smart_collection(
             session,
             collection_name=check_key_exists('collection_name', collection),
@@ -39,6 +49,9 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
     Make readlist for every entry in smart_readlists in config file
     '''
     for readlist in smart_readlists:
+
+        print_start_new_group('readlists', readlist)
+
         make_smart_readlist(
                 session,
                 readlist_name=check_key_exists('readlist_name', readlist),
@@ -56,13 +69,6 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 readlist_catagories= readlist_catagories,
                 asset_dir = asset_dir
                 )
-
-
-
-
-
-
-
 
 
 # _____________________________________________________________________________________________________

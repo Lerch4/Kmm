@@ -118,7 +118,7 @@ def _post_user_generated_item(
 
     '''
 
-    print_heading_from_item_type(item_type)
+    # print_heading_from_item_type(item_type)
     
 
     item_data = make_user_generated_item_data(item_type, item_name, content_list, item_prefix, ordered)
