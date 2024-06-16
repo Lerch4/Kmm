@@ -82,10 +82,17 @@ def make_smart_collection(
             if search_params == {}:
                 search_params = {'search': f'"{collection_name}"'}
         
-            if 'unpaged' not in search_params:
-                search_params['unpaged'] = True 
+            if isinstance(search_params, list):
+                series_list = []
+                for sp in search_params:
+                    if 'unpaged' not in search_params:
+                        sp['unpaged'] = True 
+                    series_list.extend(session._search('series', sp).content)
 
-            series_list = session._search('series', search_params).content
+            else:
+                if 'unpaged' not in search_params:
+                    search_params['unpaged'] = True 
+                series_list = session._search('series', search_params).content
 
             series_ids.extend(make_id_list(series_list))
         
