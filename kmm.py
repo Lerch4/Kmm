@@ -1,6 +1,6 @@
 import os
 
-from yaml_adapter import config
+from config_adapter import config
 from komgapy import KomgaSession
 from smart_groups.smart_collections import make_smart_collection, check_key_exists
 from smart_groups.smart_readlists import make_smart_readlist
