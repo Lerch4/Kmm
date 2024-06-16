@@ -1,0 +1,30 @@
+'''
+This is an example config file shows some of the different use cases of kmm.
+See documentation for full list of options
+Rename this folder to config to use this file
+'''
+
+
+user: <your_username/email_here>
+password: <your_password_here>
+komga_url: <your_komga_server_url_here>
+
+collection_catagories : 
+  Example Catagory : 'Ex Prefix: '
+
+smart_collections : 
+
+  - collection_name : Favorite Character
+    collection_catagory : Example Catagory
+    search_params : 
+      search : <your favorite character's name>
+
+  - collection_name : Second Favorite Character
+    collection_catagory : Example Catagory
+    search_params : 
+      search : <your second favorite character's name>
+
+# readlist_catagories : 
+
+# smart_readlists :
+
