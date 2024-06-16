@@ -3,7 +3,8 @@ from smart_groups.generic_smart_group import(
     _update_existing_item,
     _post_user_generated_item,
     KomgaSession,
-    check_key_exists
+    check_key_exists,
+    content_list_from_search_params
     
 )
 from requests import Response
@@ -65,25 +66,15 @@ def make_smart_readlist(
         elif series_search_params == None and book_search_params == {}:
             book_search_params = {'search': f'"{readlist_name}"'}
     
-
-        # initialize list of books to be added
-        book_list = []
-
+ 
         # if there are book search params search for them 
-        if len(book_search_params)>0:
-
-            if 'unpaged' not in book_search_params:
-                book_search_params['unpaged'] = True 
-
-            book_list.extend(session._search('books', book_search_params).content)
+        if book_search_params != {}:
+            book_list = content_list_from_search_params(session, 'books', book_search_params)
 
         # if there are series search params search for them 
-        if len(series_search_params)>0:
+        if series_search_params != {}:
 
-            if 'unpaged' not in series_search_params:
-                series_search_params['unpaged'] = True
-
-            series_list = session._search('series', series_search_params).content
+            series_list = content_list_from_search_params(session, 'series', series_search_params)
             series_ids.extend( make_id_list(series_list))
             for id in series_ids:
                     for book in session.books_in_series(id).content:
@@ -93,15 +84,23 @@ def make_smart_readlist(
         if book_list != []:
             book_ids.extend(make_id_list(book_list)) 
 
-
         # remove blacklisted
-        if blacklisted_book_search_params != {} or blacklisted_series_search_params != {}:
-            blacklisted_books = session._search('books', blacklisted_book_search_params).content
-            blacklisted_series = session._search('series', blacklisted_series_search_params).content
+        blacklisted_books = []
+        if blacklisted_book_search_params != {}:
+            blacklisted_books = content_list_from_search_params(session, 'books', blacklisted_book_search_params)
+
+        if blacklisted_series_search_params != {}:
+            blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_series_search_params)
+
             for series in blacklisted_series:
                 blacklisted_series_ids.append(series.id)
+
+
+        if blacklisted_series_ids != []:
             for series_id in blacklisted_series_ids:
                 blacklisted_books.extend(session.books_in_series(series_id).content)
+
+        if blacklisted_books != []:
             for book in blacklisted_books:
                 # if book.id not in blacklisted_book_ids:
                     blacklisted_book_ids.append(book.id)

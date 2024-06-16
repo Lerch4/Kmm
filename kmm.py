@@ -63,7 +63,7 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 blacklisted_series_search_params=check_key_exists('blacklisted_series_search_params', readlist, {}),
                 ordered= check_key_exists('ordered', readlist, False),
                 overwrite = check_key_exists('overwrite', readlist, False),
-                readlist_catagories= config['smart_readlists'],
+                readlist_catagories= config['readlist_catagories'],
                 asset_dir = asset_dir
                 )
 

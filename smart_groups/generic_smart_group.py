@@ -77,7 +77,7 @@ def make_smart_user_generated_item(
 
         item_prefix = make_prefix(item_prefix, item_catagory, item_catagories)
 
-    
+
         content_list = session._search(content_type, search_params).content
 
 
@@ -227,3 +227,20 @@ def update_if_item_already_exists(session, response, item_type, item_name, data,
             item = response
         
         return item
+
+
+
+def content_list_from_search_params(session, item_type, search_params):
+    if isinstance(search_params, list):
+        content_list = []
+        for sp in search_params:
+            if 'unpaged' not in search_params:
+                sp['unpaged'] = True 
+            content_list.extend(session._search(item_type, sp).content)
+
+    else:
+        if 'unpaged' not in search_params:
+            search_params['unpaged'] = True 
+        content_list = session._search(item_type, search_params).content
+
+    return content_list

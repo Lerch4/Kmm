@@ -6,7 +6,8 @@ from smart_groups.generic_smart_group import(
      _update_existing_item,
      _post_user_generated_item,
      KomgaSession,
-     check_key_exists
+     check_key_exists,
+     content_list_from_search_params
 )
 from requests import Response
 from smart_groups.util import make_id_list, remove_blacklisted, make_prefix, remove_blacklisted_content
@@ -82,17 +83,8 @@ def make_smart_collection(
             if search_params == {}:
                 search_params = {'search': f'"{collection_name}"'}
         
-            if isinstance(search_params, list):
-                series_list = []
-                for sp in search_params:
-                    if 'unpaged' not in search_params:
-                        sp['unpaged'] = True 
-                    series_list.extend(session._search('series', sp).content)
 
-            else:
-                if 'unpaged' not in search_params:
-                    search_params['unpaged'] = True 
-                series_list = session._search('series', search_params).content
+            series_list = content_list_from_search_params(session, 'series', search_params)
 
             series_ids.extend(make_id_list(series_list))
         
@@ -112,7 +104,8 @@ def make_smart_collection(
 
         # remove blacklisted
         if blacklisted_search_params !={}:
-            blacklisted_series = session._search('series', blacklisted_search_params).content
+
+            blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_search_params)
             for series in blacklisted_series:
                 blacklisted_series_ids.append(series.id)
 
