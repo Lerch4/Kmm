@@ -7,18 +7,18 @@ from smart_groups.smart_readlists import make_smart_readlist
 from smart_groups.print_outputs import print_start_new_group
 
 
-if 'asset_dir' in config:
-    asset_dir = config['asset_dir']
-else: 
-    asset_dir = os.path.join(os.path.dirname(__file__), 'config', 'assets')
-
+asset_dir = check_key_exists('asset_dir', config, os.path.join(os.path.dirname(__file__), 'config', 'assets'))
+smart_collections = check_key_exists('smart_collections', config, [])
+collection_catagories = check_key_exists('collection_catagories', config, [])
+smart_readlists = check_key_exists('smart_readlists', config, [])
+readlist_catagories = check_key_exists('readlist_catagories', config, [])
 
 
 def run_smart_collections(session: KomgaSession, asset_dir=asset_dir) -> None:
     '''
     Make collection for every entry in smart_collections in config file
     '''
-    for collection in config['smart_collections']:
+    for collection in smart_collections:
 
         print_start_new_group('collections', collection)
 
@@ -35,7 +35,7 @@ def run_smart_collections(session: KomgaSession, asset_dir=asset_dir) -> None:
             parent_collection_names=check_key_exists('parent_collection_names', collection, []),
             ordered=check_key_exists('ordered', collection, False),
             overwrite=check_key_exists('overwrite', collection, False),
-            collection_catagories=config['collection_catagories'],
+            collection_catagories=collection_catagories,
             asset_dir=asset_dir
             )
         
@@ -45,7 +45,7 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
     '''
     Make readlist for every entry in smart_readlists in config file
     '''
-    for readlist in config['smart_readlists']:
+    for readlist in smart_readlists:
 
         print_start_new_group('readlists', readlist)
 
@@ -63,7 +63,7 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 blacklisted_series_search_params=check_key_exists('blacklisted_series_search_params', readlist, {}),
                 ordered= check_key_exists('ordered', readlist, False),
                 overwrite = check_key_exists('overwrite', readlist, False),
-                readlist_catagories= config['readlist_catagories'],
+                readlist_catagories= readlist_catagories,
                 asset_dir = asset_dir
                 )
 
