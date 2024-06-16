@@ -87,14 +87,9 @@ def get_backup_name(search_params: dict) -> str | None:
 
 
 def make_prefix(prefix: str, catagory: str, catagories: dict) -> str:
-    if prefix == '' and catagory in catagories.keys():
+    if prefix == '' and catagory in catagories:
         prefix = catagories[catagory]
     return prefix
-
-
-# def remove_duplicates(data: list) -> list:
-#     return list(set(data))
-
 
 def make_content_id_key(item_type: str):
 
@@ -105,39 +100,6 @@ def make_content_id_key(item_type: str):
             content_id_key = 'bookIds'
 
     return content_id_key
-
-
-# def get_content_list(session, item_type, series_search_params, book_search_params):
-
-#     if 'unpaged' not in series_search_params.keys():
-#         series_search_params['unpaged'] = True 
-
-#     match item_type:
-#         case 'collections':
-#             item_catagories = collection_catagories
-#             content_list = session._search('series', series_search_params).content
-            
-#         case 'readlists':
-#             item_catagories = readlist_catagories
-#             content_list = []
-
-#             if book_search_params != {}:
-#                 if 'unpaged' not in book_search_params.keys():
-#                     book_search_params['unpaged'] = True 
-#                 content_list.extend(session._search('books', book_search_params).content)
-
-
-#             if len(series_search_params)>1:
-#                 series_list = session._search('series', series_search_params).content
-#                 series_id_list = make_id_list(series_list)
-
-#                 for id in series_id_list:
-#                     for book in session.books_in_series(id).content:
-#                         content_list.append(book)
-    
-    
-#     return content_list
-
 
 
 def make_user_generated_item_data(item_type, item_name, content_list, item_prefix, ordered= False, summary='') -> dict:
