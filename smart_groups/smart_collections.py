@@ -1,11 +1,11 @@
-
+from komgapy import KomgaSession, KomgaErrorResponse
+from komgapy.exception_classes import NoSearchResults
 
 from smart_groups.generic_smart_group import(
      make_smart_user_generated_item,
      _add_item_poster,
      _update_existing_item,
      _post_user_generated_item,
-     KomgaSession,
      check_key_exists,
      content_list_from_search_params
 )
@@ -110,19 +110,27 @@ def make_smart_collection(
                 blacklisted_series_ids.append(series.id)
 
         if blacklisted_series_ids != []:
-            remove_blacklisted_content(series_ids, blacklisted_series_ids)
+           series_ids = remove_blacklisted_content(series_ids, blacklisted_series_ids)
 
 
         collection_prefix = make_prefix(collection_prefix, collection_catagory, collection_catagories)
 
 
         # post collection and return collection data
-        collection = _post_user_generated_item(session,'collections', collection_name, series_ids, collection_prefix, ordered, overwrite)
+        if series_ids != []:
+            collection = _post_user_generated_item(session,'collections', collection_name, series_ids, collection_prefix, ordered, overwrite)
 
 
-        if isinstance(collection, Response):
-            print(collection.text)
+            if isinstance(collection, Response):
+                print(collection.text)
+        else:
+            try:
+                collection = session.get_collection(collection_name=(collection_prefix + collection_name))
 
-
-        _add_item_poster(session,item_type='collections', item = collection, item_name = collection_name, item_catagory = collection_catagory, asset_dir=asset_dir)
+            except NoSearchResults:
+                collection = None
+                print('Can Not Create or Update')
+            
+        if not isinstance(collection, KomgaErrorResponse) and collection != None:
+            _add_item_poster(session,item_type='collections', item = collection, item_name = collection_name, item_catagory = collection_catagory, asset_dir=asset_dir)
 

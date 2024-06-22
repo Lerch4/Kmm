@@ -87,7 +87,7 @@ def get_backup_name(search_params: dict) -> str | None:
 
 
 def make_prefix(prefix: str, catagory: str, catagories: dict) -> str:
-    if prefix == '' and catagory in catagories:
+    if prefix == None and catagory in catagories:
         prefix = catagories[catagory]
     return prefix
 

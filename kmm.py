@@ -26,7 +26,7 @@ def run_smart_collections(session: KomgaSession, asset_dir=asset_dir) -> None:
             session,
             collection_name=check_key_exists('collection_name', collection),
             search_params=check_key_exists('search_params', collection, {}),
-            collection_prefix=check_key_exists('collection_prefix', collection, ""),
+            collection_prefix=check_key_exists('collection_prefix', collection),
             collection_catagory=check_key_exists('collection_catagory', collection),
             series_ids=check_key_exists('series_ids', collection, []),
             blacklisted_series_ids=check_key_exists('blacklisted_series_ids', collection, []),

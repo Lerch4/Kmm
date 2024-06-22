@@ -1,7 +1,7 @@
-import os
+import os, io
 from requests import Response
 from komgapy.util import remove_duplicates
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from smart_groups.util import *
 
 from komgapy import (
@@ -137,7 +137,7 @@ def _post_user_generated_item(
 
 
 
-def _add_item_poster(session, item_type, item, item_name, item_catagory, asset_dir) -> None:
+def _add_item_poster(session, item_type, item, item_name, item_catagory, asset_dir, use_overlay = True) -> None:
     '''
     Works with user generated items such as collections and readlists
     '''
@@ -147,18 +147,67 @@ def _add_item_poster(session, item_type, item, item_name, item_catagory, asset_d
         poster_dir += '\\' + item_catagory
 
     poster_file_name = get_poster_file_name(replace_illegal_charactor(item_name), poster_dir)
+
     if poster_file_name != None:      
         print_has_poster_asset(True)
-        current_image = session.get_collection_poster(item.id)
+
+        current_image = session._get_item_poster(item_type, item.id)
+
         poster_file_path = os.path.join(poster_dir, poster_file_name)
+
         if current_image == Image.open(poster_file_path):
             print('Poster Already Uploaded')
+
         else:
             r = session._update_item_poster(item_type,item.id, poster_file_path)
 
     else:
         print_has_poster_asset(False)
 
+        if use_overlay: 
+
+            overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
+
+            if overlay_path != None:
+                print('Using Default Overlay')
+                (image, current_image) = add_overlay(session, item_type, item.id, overlay_path)
+                if image._size != current_image._size:
+                    if not os.path.exists('temp'):
+                        os.mkdir('temp')
+                    image.save('temp/temp.png')
+                    r = session._update_item_poster(item_type,item.id, 'temp/temp.png')
+                    os.remove('temp/temp.png')
+                    os.removedirs('temp')
+                else:
+                    print('Already has custom poster')
+
+
+            else:
+                print('No overlay file found')
+
+            # raw = image.tobytes(encoder_name='utf-8')
+            # byte_arr = io.BytesIO()
+            # font = ImageFont.truetype("arial.ttf", size[1]/15)
+
+            # draw = ImageDraw.Draw(image)
+
+            # txt = item.name
+            # if '\n' in txt:
+            #    font = ImageFont.truetype("arial.ttf", size[0]/10) 
+            # draw.text((size[0]-((size[1]/75)), size[1]-((size[1]/10)))  , txt, fill =('white'), font=font, anchor='rm', align='right', spacing=-3)
+
+            
+            # image.save(byte_arr, format = 'PNG')
+
+                
+
+
+            # image_bytes = byte_arr.getvalue()
+            # print(byte_arr.getvalue())
+            
+
+            # poster_file_path = os.path.join(poster_dir, image)
+                
 
 
 def _update_existing_item(session, item_type, data, item = None, item_id = None, item_name = None, overwrite = False):
@@ -244,3 +293,31 @@ def content_list_from_search_params(session, item_type, search_params):
         content_list = session._search(item_type, search_params).content
 
     return content_list
+
+
+#---------
+
+def get_overlay_path(item_type, item_catagory, asset_dir):
+
+    if os.path.exists(os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')):
+        return os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')
+    elif os.path.exists(os.path.join(asset_dir, item_type, 'overlay.png')):
+        return os.path.join(asset_dir, item_type, 'overlay.png')
+    elif os.path.exists(os.path.join(asset_dir, 'overlay.png')):
+        return os.path.join(asset_dir, item_type, 'overlay.png')
+    else:
+        return None
+    
+
+def add_overlay(session, item_type, item_id, overlay_path):
+    # print('Using Default Overlay')
+    overlay = Image.open(overlay_path)
+    current_image = session._get_item_poster(item_type, item_id)
+    image = current_image
+    size = image._size
+    overlay.thumbnail(size)
+    image = image.resize(overlay._size)
+    # overlay = overlay.resize(size) 
+    image.paste(overlay, (0,0), mask = overlay)
+    
+    return (image, current_image)
