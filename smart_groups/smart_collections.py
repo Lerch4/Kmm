@@ -13,52 +13,73 @@ from requests import Response
 from smart_groups.util import make_id_list, remove_blacklisted, make_prefix, remove_blacklisted_content
 
 
-def update_existing_collection(session, data, collection = None, collection_id=None, collection_name = None, overwrite = False):
+def update_existing_collection(
+          session: KomgaSession,
+          data: dict,
+          collection: str = None,
+          collection_id: str = None,
+          collection_name: str = None,
+          overwrite: bool = False
+          ):
+    '''
+    Updates a collection from data
 
-    return _update_existing_item(session, 'collections', data=data, item = collection, item_id = collection_id, item_name = collection_name, overwrite=overwrite)
+    :param data: dictionary of data to be updated(see docs for keys).
+    :param overwrite: True replaces old data with new data, False appends new data to old data.
+    '''
+
+    return _update_existing_item(
+         session,
+         'collections',
+         data = data,
+         item = collection,
+         item_id = collection_id,
+         item_name = collection_name,
+         overwrite = overwrite
+         )
 
 
-def post_collection(session, collection_name, series_list, collection_prefix = '', ordered = False, overwrite = False):
+def post_collection(
+          session: KomgaSession,
+          collection_name: str,
+          series_list: list[str],
+          collection_prefix: str = '',
+          ordered: bool = False,
+          overwrite: bool = False
+          ):
+    '''
+    '''
 
-    return _post_user_generated_item(session, 'collections', collection_name, series_list, collection_prefix, ordered, overwrite)
+    return _post_user_generated_item(
+         session,
+         'collections',
+         collection_name,
+         series_list,
+         collection_prefix,
+         ordered,
+         overwrite
+         )
 
 
-def add_collection_poster(session, collection, collection_name, collection_catagory):
+def add_collection_poster(
+          session: KomgaSession,
+          collection: str,
+          collection_name: str,
+          collection_catagory: str
+          ):
+    '''
+    
+    '''
 
-    return _add_item_poster(session, 'collections', item= collection, item_name=collection_name, item_catagory=collection_catagory)
+    return _add_item_poster(
+         session,
+         'collections',
+         item = collection,
+         item_name = collection_name,
+         item_catagory = collection_catagory
+         )
 
 
-def make_smart_collection_old(
-    session,
-    search_params: dict = None,
-    collection_prefix: str = None,
-    collection_name: str = None,
-    collection_catagory: str = None,
-    series_ids: list = None,
-    blacklisted_series_ids: list = None,
-    blacklisted_search_params: dict = None,
-    ordered = False,
-    overwrite = False,
-    collection_catagories = None,
-    asset_dir = None
-    ):
-        make_smart_user_generated_item(
-        session,
-        'collections',
-        collection_name,        
-        search_params=search_params,
-        item_prefix=collection_prefix,
-        item_catagory=collection_catagory,
-        content_id_list=series_ids,
-        blacklisted_content_ids = blacklisted_series_ids,
-        blacklisted_search_params=blacklisted_search_params,
-        ordered=ordered,
-        overwrite=overwrite,
-        item_catagories=collection_catagories,
-        asset_dir=asset_dir
-
-        )
-         
 def make_smart_collection(
     session: KomgaSession,
     search_params: dict = None,
@@ -68,13 +89,31 @@ def make_smart_collection(
     series_ids: list = [],
     blacklisted_series_ids: list = [],
     blacklisted_search_params: dict = {},
-    parent_collection_ids: list = [],
-    parent_collection_names: list = [],
+    parent_collection_ids: list[str] = [],
+    parent_collection_names: list[str] = [],
     ordered = False,
     overwrite = False,
     collection_catagories = None,
-    asset_dir = None
-):
+    asset_dir = None,
+    overlay_mode: str = 'no_asset'
+    ) -> None:
+        '''
+        Create a Komga collection based on input perameters.
+        Then adds poster art or overlay from assets if available.
+        If parameters are not used they are skipped.
+        Best to mostly use 'search' param with Komga's Full Text Search (see docs)
+
+        :param search_params: Dictionary of search parameters (see docs for keys).
+        :param collection_prefix: Custom prefix for collection(overwrites catagory prefix).
+        :param collection_catagory: Custom catagory that determines location of assets and prefix.
+        :param series_ids: Komga series id list for series to be included in new data.
+        :param blacklisted_series_ids: Komga series id list for series to be excluded from new data (Experimental).
+        :param blacklisted_search_params: Search parameters for series to be excluded (Experminetal).
+        :param parent_collection_ids: list of collection ids whose sereis will be added to new data(Experimental)
+        :param parent_collection_names: List of collection names (exact with prefix) whose series will be added to new data(Experimental) 
+        :param ordered: True keeps order while false sorts by alpha(Experminetal).
+        :param overwrite: True replaces old content with new content while false appends new content to old content.
+        '''
          # trim name
         collection_name = collection_name.strip()
         
@@ -82,7 +121,6 @@ def make_smart_collection(
         if search_params != None:
             if search_params == {}:
                 search_params = {'search': f'"{collection_name}"'}
-        
 
             series_list = content_list_from_search_params(session, 'series', search_params)
 
@@ -98,6 +136,7 @@ def make_smart_collection(
         if parent_collection_ids != []:
              for collection_id in parent_collection_ids:
                   series_from_collection = session.series_in_collection(collection_id)
+
                   for series in series_from_collection:
                        series_ids.append(series.id)
 
@@ -129,8 +168,16 @@ def make_smart_collection(
 
             except NoSearchResults:
                 collection = None
-                print('Can Not Create or Update')
+                print('No existing collection and no search results found')
             
         if not isinstance(collection, KomgaErrorResponse) and collection != None:
-            _add_item_poster(session,item_type='collections', item = collection, item_name = collection_name, item_catagory = collection_catagory, asset_dir=asset_dir)
+            _add_item_poster(
+                session,
+                item_type = 'collections',
+                item = collection,
+                file_name = collection_name,
+                item_catagory = collection_catagory,
+                asset_dir = asset_dir,
+                overlay_mode = overlay_mode
+                )
 

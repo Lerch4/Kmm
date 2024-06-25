@@ -3,11 +3,13 @@ from ruamel.yaml import YAML
 
 config_dir_loc = os.path.join(os.path.dirname(__file__), 'config')
 
-config_file = open(os.path.join(config_dir_loc, 'config.yml'))
+# config_file = open(os.path.join(config_dir_loc, 'config.yml'))
 
-yaml = YAML()
+with open(os.path.join(config_dir_loc, 'config.yml')) as config_file:
 
-yaml.allow_duplicate_keys = True
+    yaml = YAML()
 
-config = yaml.load(config_file)
+    yaml.allow_duplicate_keys = True
+
+    config = yaml.load(config_file)
 
