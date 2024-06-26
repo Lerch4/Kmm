@@ -18,7 +18,7 @@ from komgapy import (
 # Supplimental Functions---------------------------------------------------------------------------------------------------------------------------
 
 def get_poster_file_name(name: str, file_location: str) -> str | None:
-
+    name = replace_illegal_charactor(name)
     file_list = os.listdir(file_location)
     for file in file_list:
         if name == file[:-4]:

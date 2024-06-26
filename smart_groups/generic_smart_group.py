@@ -92,9 +92,7 @@ def make_smart_user_generated_item(
         if isinstance(item, Response):
             print(item.text)
 
-
         _add_item_poster(session,item_type=item_type, item = item, item_name = item_name, item_catagory = item_catagory, asset_dir=asset_dir)
-
 
 
 def _post_user_generated_item(
@@ -148,22 +146,37 @@ def _add_item_poster(
         ) -> None:
     '''
     Add poster thumbnail to Komga item
-    Works with user generated items such as collections and readlists.
+    
 
     '''
     poster_dir = os.path.join(asset_dir, item_type)
-    
+        
     if item_catagory != None and os.path.exists(f'{poster_dir}\\{item_catagory}'):
         poster_dir += '\\' + item_catagory
 
-    poster_file_name = get_poster_file_name(replace_illegal_charactor(file_name), poster_dir)
+    poster_file_name = get_poster_file_name(file_name, poster_dir)
 
+    current_image = session._get_item_poster(item_type, item.id)
+    
     if poster_file_name != None:      
         print_has_poster_asset(True)
 
-        current_image = session._get_item_poster(item_type, item.id)
-
         poster_file_path = os.path.join(poster_dir, poster_file_name)
+
+
+        if overlay_mode == 'force':
+
+            overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
+            
+
+            if overlay_path != None:
+                print('Using Overlay')
+                image = Image.open(poster_file_path)
+                image = add_overlay(overlay_path, image)
+                upload_image_object(session, item_type, item.id, image)
+                return None
+            else:
+                print('No overlay file found')
 
         if current_image == Image.open(poster_file_path):
             print('Poster Already Uploaded')
@@ -174,28 +187,21 @@ def _add_item_poster(
     else:
         print_has_poster_asset(False)
 
-
-        # match overlay_mode:
-        #     case 'no_asset':
-
-
-
-        if overlay_mode == 'no_asset': 
-
+        if overlay_mode in ['no_asset', 'force']: 
             overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
+            
 
             if overlay_path != None:
-                print('Using Default Overlay')
-                (image, current_image) = add_overlay(session, item_type, item.id, overlay_path)
-                if image._size != current_image._size:
-                    upload_image_object(session, item_type, item.id, image)
+                print('Using Overlay')
+                image = add_overlay(overlay_path, current_image)
+                if overlay_mode == 'force' or image._size != current_image._size:
+                      upload_image_object(session, item_type, item.id, image)                  
                 else:
                     print('Already has custom poster')
 
             else:
                 print('No overlay file found')
 
-                
 def _update_existing_item(
         session: KomgaSession,
         item_type: str,
@@ -322,10 +328,9 @@ def get_overlay_path(item_type: str, item_catagory: str, asset_dir: str):
         return None
     
 
-def add_overlay(session, item_type: str, item_id: str, overlay_path: str):
+def add_overlay(overlay_path: str, current_image: Image.Image):
     # print('Using Default Overlay')
     overlay = Image.open(overlay_path)
-    current_image = session._get_item_poster(item_type, item_id)
     image = current_image
     size = image._size
     overlay.thumbnail(size)
@@ -333,7 +338,8 @@ def add_overlay(session, item_type: str, item_id: str, overlay_path: str):
     # overlay = overlay.resize(size) 
     image.paste(overlay, (0,0), mask = overlay)
     
-    return (image, current_image)
+    return image
+
 
 def upload_image_object(session, item_type: str, item_id: str, image: Image.Image):
     if not os.path.exists('temp'):
@@ -344,39 +350,14 @@ def upload_image_object(session, item_type: str, item_id: str, image: Image.Imag
         os.removedirs('temp')
 
 
+def determine_poster_file_path(item_type: str, item_catagory: str, asset_dir: str):
 
+    poster_dir = os.path.join(asset_dir, item_type)
+    
+    if item_catagory != None and os.path.exists(f'{poster_dir}\\{item_catagory}'):
+        poster_dir += '\\' + item_catagory
 
-# def test(session, item_type_)
-#     overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
-
-#     if overlay_path != None:
-#         print('Using Default Overlay')
-#         (image, current_image) = add_overlay(session, item_type, item.id, overlay_path)
-#         if image._size != current_image._size:
-#             upload_image_object(session, item_type, item.id, image)
-#         else:
-#             print('Already has custom poster')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return poster_dir
 
 
 

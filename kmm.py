@@ -36,7 +36,8 @@ def run_smart_collections(session: KomgaSession, asset_dir=asset_dir) -> None:
             ordered=check_key_exists('ordered', collection, False),
             overwrite=check_key_exists('overwrite', collection, False),
             collection_catagories=collection_catagories,
-            asset_dir=asset_dir
+            asset_dir=asset_dir,
+            overlay_mode=check_key_exists('overlay_mode', collection,'no_asset')
             )
         
 
