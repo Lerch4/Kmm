@@ -37,6 +37,8 @@ def make_smart_user_generated_item(
         asset_dir = None
         ):
         '''
+        OLD AND OUTDATED
+        ------------------
         Create or update collection or readlist based on metadata of series or books
 
         :param item_type: "collections" or "readlists"
@@ -57,7 +59,7 @@ def make_smart_user_generated_item(
         if search_params == None:
             search_params = {'search': f'"{item_name}"'}
         
-        if 'unpaged' not in search_params.keys():
+        if 'unpaged' not in search_params:
             search_params['unpaged'] = True 
 
 
@@ -93,6 +95,7 @@ def make_smart_user_generated_item(
             print(item.text)
 
         _add_item_poster(session,item_type=item_type, item = item, item_name = item_name, item_catagory = item_catagory, asset_dir=asset_dir)
+
 
 
 def _post_user_generated_item(
@@ -136,18 +139,19 @@ def _post_user_generated_item(
 
 
 def _add_item_poster(
-        session,
+        session: KomgaSession,
         item_type: str,
-        item,
+        item: KomgaCollection| KomgaReadlist| KomgaBook| KomgaSeries,
         file_name: str,
         item_catagory: str,
         asset_dir: str,
         overlay_mode: str = 'no_asset'
         ) -> None:
     '''
-    Add poster thumbnail to Komga item
+    Add poster thumbnail to Komga item.
+    Will add overlay to thumbnail depending on overlay_mode
     
-
+    :param overlay_mode: 'no_asset', 'force', 'disable'
     '''
     poster_dir = os.path.join(asset_dir, item_type)
         
@@ -165,18 +169,18 @@ def _add_item_poster(
 
 
         if overlay_mode == 'force':
-
             overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
             
-
             if overlay_path != None:
                 print('Using Overlay')
                 image = Image.open(poster_file_path)
                 image = add_overlay(overlay_path, image)
                 upload_image_object(session, item_type, item.id, image)
                 return None
+            
             else:
                 print('No overlay file found')
+
 
         if current_image == Image.open(poster_file_path):
             print('Poster Already Uploaded')
@@ -190,17 +194,19 @@ def _add_item_poster(
         if overlay_mode in ['no_asset', 'force']: 
             overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
             
-
             if overlay_path != None:
                 print('Using Overlay')
                 image = add_overlay(overlay_path, current_image)
                 if overlay_mode == 'force' or image._size != current_image._size:
-                      upload_image_object(session, item_type, item.id, image)                  
+                      upload_image_object(session, item_type, item.id, image)  
+
                 else:
                     print('Already has custom poster')
 
             else:
                 print('No overlay file found')
+
+
 
 def _update_existing_item(
         session: KomgaSession,
@@ -261,7 +267,9 @@ def _update_existing_item(
 
     return item
 
+
 #---------
+
 
 def update_if_item_already_exists(
         session: KomgaSession,
@@ -297,8 +305,7 @@ def update_if_item_already_exists(
         return item
 
 
-
-def content_list_from_search_params(session, item_type, search_params):
+def content_list_from_search_params(session: KomgaSession, item_type: str, search_params: dict):
     if isinstance(search_params, list):
         content_list = []
         for sp in search_params:
@@ -312,8 +319,6 @@ def content_list_from_search_params(session, item_type, search_params):
         content_list = session._search(item_type, search_params).content
 
     return content_list
-
-
 
 
 def get_overlay_path(item_type: str, item_catagory: str, asset_dir: str):
@@ -341,13 +346,13 @@ def add_overlay(overlay_path: str, current_image: Image.Image):
     return image
 
 
-def upload_image_object(session, item_type: str, item_id: str, image: Image.Image):
+def upload_image_object(session: KomgaSession, item_type: str, item_id: str, image: Image.Image):
     if not os.path.exists('temp'):
         os.mkdir('temp')
-        image.save('temp/temp.png')
-        session._update_item_poster(item_type, item_id, 'temp/temp.png')
-        os.remove('temp/temp.png')
-        os.removedirs('temp')
+    image.save('temp/temp.png')
+    session._update_item_poster(item_type, item_id, 'temp/temp.png')
+    os.remove('temp/temp.png')
+    os.removedirs('temp')
 
 
 def determine_poster_file_path(item_type: str, item_catagory: str, asset_dir: str):
