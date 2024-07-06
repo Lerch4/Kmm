@@ -3,12 +3,11 @@ from smart_groups.generic_smart_group import(
     _add_item_poster,
     _update_existing_item,
     _post_user_generated_item,
-    check_key_exists,
     content_list_from_search_params
     
 )
 from requests import Response
-from smart_groups.util import make_id_list, remove_blacklisted, make_prefix, remove_blacklisted_content
+from smart_groups.util import make_id_list, make_prefix, remove_blacklisted_content
 
 def update_existing_readlist(
     session: KomgaSession,

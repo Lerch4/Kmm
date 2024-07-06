@@ -11,3 +11,10 @@ def remove_duplicates(data: list) -> list:
     return data_no_dups
 
 
+def check_key_exists(key: str, dictionary: dict, missing_return_value = None):
+    
+    if key in dictionary.keys():    
+        return dictionary[key]
+
+    else:    
+        return missing_return_value

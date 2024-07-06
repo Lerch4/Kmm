@@ -1,13 +1,12 @@
-import os, io
+import os
 from requests import Response
 from komgapy.util import remove_duplicates
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from smart_groups.util import *
 
 from komgapy import (
     KomgaSession,
     KomgaErrorResponse,
-    KomgaSearchResponse,
     KomgaSeries,
     KomgaBook,
     KomgaCollection,
@@ -16,7 +15,6 @@ from komgapy import (
 
 from smart_groups.print_outputs import(
     print_item_data,
-    print_heading_from_item_type,
     print_has_poster_asset
 )
 

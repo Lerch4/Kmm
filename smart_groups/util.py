@@ -1,10 +1,8 @@
 
 import os
-from komgapy.util import remove_duplicates
+from util import remove_duplicates, check_key_exists
 from komgapy import (
     KomgaSession,
-    KomgaErrorResponse,
-    KomgaSearchResponse,
     KomgaSeries,
     KomgaBook,
     KomgaCollection,
@@ -68,13 +66,7 @@ def remove_blacklisted_search_params(session: KomgaSession, content_type: str, i
     return remove_blacklisted_content(id_list, blacklisted_ids)
 
 
-def check_key_exists(key: str, dictionary: dict, missing_return_value = None):
-    
-    if key in dictionary.keys():    
-        return dictionary[key]
 
-    else:    
-        return missing_return_value
 
 
 def get_backup_name(search_params: dict) -> str | None:   
