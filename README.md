@@ -11,7 +11,7 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
 
 
 
-### Still too be mplemented
+### Still too be Implemented
 - [ ] Ability to add readlists from .cbl file
     - [ ] Ability to add community .cbl lists
 - [ ] Add / edit / scrape series metadata (series.json)
@@ -49,24 +49,24 @@ collection_catagories :
 
 smart_collections : 
 
-# This will create a collection called {0}: Manga
+# This will create a collection called {0}: Manga,
 # with all series with reading direction set to right to left 
   - collection_name: Manga
     collection_catagory: General
     search_params:
       search: reading_direction:right_to_left
 
-# This will create a collection called {1}: Hellboy
+# This will create a collection called {1}: Hellboy,
 # with all series returned from search for 'Hellboy' 
   - collection_name: Hellboy
     collection_catagory: Series Group
 
-# This will create a collection called {2}: Nightwing
+# This will create a collection called {2}: Nightwing,
 # with all series returned from search for 'Nightwing' 
   - collection_name: Nightwing
     collection_catagory: Characters
 
-# This will create a collection called {1}: Terminator
+# This will create a collection called {1}: Terminator,
 # with all series returned from search for 'Terminator',
 # except with series that include 'Deathstroke' or 'X-Terminators'
   - collection_name: Terminator
@@ -74,22 +74,22 @@ smart_collections :
     search_params: 
       search: '"Terminator" NOT ("Deathstroke" OR "X-Terminators")'
 
-# This will create a collection called {8}: Image
-# with all series from publisher 'Image',
+# This will create a collection called {8}: Image,
+# with all series from publisher 'Image'
   - collection_name: Image
     collection_catagory: Publishers
     search_params:
       publisher: Image
 
-# This will create a collection called {5}: Jack Kirby
-# with all series with Jack Kirby as penciller or writer,
+# This will create a collection called {5}: Jack Kirby,
+# with all series with Jack Kirby as penciller or writer
   - collection_name: Jack Kirby
     collection_catagory: Creators
     search_params:
       search: '((penciller:(Jack Kirby)) OR (writer:(Jack Kirby)))'
 
-# This will create a collection called {5}: Jack Kirby
-# with all series with Alan Moore as writer,
+# This will create a collection called {5}: Jack Kirby,
+# with all series with Alan Moore as writer
   - collection_name: Alan Moore
     collection_catagory: Creators
     search_params:
