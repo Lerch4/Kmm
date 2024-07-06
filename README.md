@@ -11,7 +11,7 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
 
 
 
-### Still to be implemented
+### Still too be mplemented
 - [ ] Ability to add readlists from .cbl file
     - [ ] Ability to add community .cbl lists
 - [ ] Add / edit / scrape series metadata (series.json)
@@ -40,19 +40,60 @@ password: <your_password_here>
 komga_url: <your_komga_server_url_here>
 
 collection_catagories : 
-  Example Catagory : 'Ex Prefix: '
+  General      : '{0}: '
+  Series Group : '{1}: '
+  Characters   : '{2}: '
+  Creators     : '{5}: '
+  Publishers   : '{8}: '
+
 
 smart_collections : 
 
-  - collection_name : Favorite Character
-    collection_catagory : Example Catagory
-    search_params : 
-      search : <your favorite character's name>
+# This will create a collection called {0}: Manga
+# with all series with reading direction set to right to left 
+  - collection_name: Manga
+    collection_catagory: General
+    search_params:
+      search: reading_direction:right_to_left
 
-  - collection_name : Second Favorite Character
-    collection_catagory : Example Catagory
-    search_params : 
-      search : <your second favorite character's name>
+# This will create a collection called {1}: Hellboy
+# with all series returned from search for 'Hellboy' 
+  - collection_name: Hellboy
+    collection_catagory: Series Group
+
+# This will create a collection called {2}: Nightwing
+# with all series returned from search for 'Nightwing' 
+  - collection_name: Nightwing
+    collection_catagory: Characters
+
+# This will create a collection called {1}: Terminator
+# with all series returned from search for 'Terminator',
+# except with series that include 'Deathstroke' or 'X-Terminators'
+  - collection_name: Terminator
+    collection_catagory: Series Group
+    search_params: 
+      search: '"Terminator" NOT ("Deathstroke" OR "X-Terminators")'
+
+# This will create a collection called {8}: Image
+# with all series from publisher 'Image',
+  - collection_name: Image
+    collection_catagory: Publishers
+    search_params:
+      publisher: Image
+
+# This will create a collection called {5}: Jack Kirby
+# with all series with Jack Kirby as penciller or writer,
+  - collection_name: Jack Kirby
+    collection_catagory: Creators
+    search_params:
+      search: '((penciller:(Jack Kirby)) OR (writer:(Jack Kirby)))'
+
+# This will create a collection called {5}: Jack Kirby
+# with all series with Alan Moore as writer,
+  - collection_name: Alan Moore
+    collection_catagory: Creators
+    search_params:
+      author: Alan Moore, writer 
 ```
     
 - Run Kmm.py
