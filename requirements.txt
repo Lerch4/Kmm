@@ -1,4 +1,4 @@
-# komgapy
+komgapy @ git+https://github.com/Lerch4/KomgaPy
 pillow
 ruamel.yaml
 

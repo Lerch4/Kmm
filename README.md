@@ -22,14 +22,9 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
 
 
 ## **Installation**
-1. First download and install [KomgaPy](https://github.com/Lerch4/KomgaPy)
-    - Currently KomgaPy has to be downloaded and installed manually
-	    - Eventually will be added to PyPI
-        - Download and extract repo and install repo to pip
-
-2. Then Download and extract Kmm repo 
-3. Finally install additional requirements
-    - `pip install requirements.txt`
+- First Download and extract Kmm repo 
+-  Then install requirements
+    - `pip install -r requirements.txt`
 
 ## **Usage**
 - Set up config directory and config.yml file
@@ -96,6 +91,9 @@ smart_collections :
       author: Alan Moore, writer 
 ```
     
-- Run Kmm.py
+- Run kmm.py
+```
+python kmm.py
+```
 
 <!-- See [docs](./docs/) for further usage examples. -->
