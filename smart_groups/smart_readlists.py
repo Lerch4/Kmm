@@ -1,3 +1,5 @@
+import os
+
 from komgapy import KomgaReadlist, KomgaSession, KomgaErrorResponse
 from smart_groups.generic_smart_group import(
     _add_item_poster,
@@ -66,7 +68,7 @@ def add_readlist_poster(
 
 
 def make_smart_readlist(
-    session,
+    session: KomgaSession,
     readlist_name: str,
     readlist_catagory: str = None,
     series_search_params: dict = {},
@@ -81,7 +83,8 @@ def make_smart_readlist(
     ordered: bool = False,
     overwrite: bool = False,
     readlist_catagories = None,
-    asset_dir = None
+    asset_dir = None,
+    cbl: str = None
     ):
     '''
     Create or update readlist based on metadata of series or books
@@ -99,67 +102,89 @@ def make_smart_readlist(
     # trim item name
     readlist_name = readlist_name.strip()
 
-    # set default search_params
-    if series_search_params == {} and book_search_params == {}:
-        series_search_params = {'search': f'"{readlist_name}"'}
 
-    elif series_search_params == None and book_search_params == {}:
-        book_search_params = {'search': f'"{readlist_name}"'}
+    if cbl != None:
+        if cbl[:-4] != '.cbl': 
+            cbl += '.cbl'
+        cbl_loc = os.path.join(asset_dir, 'cbl', cbl)
+        r = session.match_readlist_cbl_from_path(cbl_loc)
+        book_ids = r.book_ids
+        ordered = True
+        overwrite = True
 
-    #  if 'unpaged' not in search_params.keys():
-    #     search_params['unpaged'] = True 
-
-
-    # if there are book search params search for them 
-    if book_search_params != {}:
-        book_list = content_list_from_search_params(session, 'books', book_search_params)
-
-    # if there are series search params search for them 
-    if series_search_params != {}:
-
-        series_list = content_list_from_search_params(session, 'series', series_search_params)
-        series_ids.extend( make_id_list(series_list))
-        for id in series_ids:
-                for book in session.books_in_series(id).content:
-                    book_list.append(book)
-
-    # add searched book ids to book id list
-    if book_list != []:
-        book_ids.extend(make_id_list(book_list)) 
-
-    # remove blacklisted
-    blacklisted_books = []
-    if blacklisted_book_search_params != {}:
-        blacklisted_books = content_list_from_search_params(session, 'books', blacklisted_book_search_params)
-
-    if blacklisted_series_search_params != {}:
-        blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_series_search_params)
-
-        for series in blacklisted_series:
-            blacklisted_series_ids.append(series.id)
+    else:
 
 
-    if blacklisted_series_ids != []:
-        for series_id in blacklisted_series_ids:
-            blacklisted_books.extend(session.books_in_series(series_id).content)
+        # set default search_params
+        if series_search_params == {} and book_search_params == {}:
+            series_search_params = {'search': f'"{readlist_name}"'}
 
-    if blacklisted_books != []:
-        for book in blacklisted_books:
-            # if book.id not in blacklisted_book_ids:
-                blacklisted_book_ids.append(book.id)
+        elif series_search_params == None and book_search_params == {}:
+            book_search_params = {'search': f'"{readlist_name}"'}
 
-    if blacklisted_book_ids != []:
-        remove_blacklisted_content(book_ids, blacklisted_book_ids)
+        #  if 'unpaged' not in search_params.keys():
+        #     search_params['unpaged'] = True 
+
+
+        # if there are book search params search for them
+        if book_search_params != {}:
+            book_list = content_list_from_search_params(session, 'books', book_search_params)
+
+        # if there are series search params search for them 
+        if series_search_params != {}:
+
+            series_list = content_list_from_search_params(session, 'series', series_search_params)
+            series_ids.extend( make_id_list(series_list))
+            for id in series_ids:
+                    for book in session.books_in_series(id).content:
+                        book_list.append(book)
+
+        # add searched book ids to book id list
+        if book_list != []:
+            book_ids.extend(make_id_list(book_list)) 
+
+        # remove blacklisted
+        blacklisted_books = []
+        if blacklisted_book_search_params != {}:
+            blacklisted_books = content_list_from_search_params(session, 'books', blacklisted_book_search_params)
+
+        if blacklisted_series_search_params != {}:
+            blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_series_search_params)
+
+            for series in blacklisted_series:
+                blacklisted_series_ids.append(series.id)
+
+
+        if blacklisted_series_ids != []:
+            for series_id in blacklisted_series_ids:
+                blacklisted_books.extend(session.books_in_series(series_id).content)
+
+        if blacklisted_books != []:
+            for book in blacklisted_books:
+                # if book.id not in blacklisted_book_ids:
+                    blacklisted_book_ids.append(book.id)
+
+        if blacklisted_book_ids != []:
+           book_ids = remove_blacklisted_content(book_ids, blacklisted_book_ids)
 
     # determine prefix
     readlist_prefix = make_prefix(readlist_prefix, readlist_catagory, readlist_catagories)
 
+
     # post collection and return collection data
     readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
+
 
     # if response was to able to be converted print response
     if isinstance(readlist, Response):
         print(readlist.text)
 
 
-    _add_item_poster(session,item_type='readlists', item = readlist, item_name = readlist_name, item_catagory = readlist_catagory, asset_dir=asset_dir) 
+    _add_item_poster(
+        session,
+        item_type='readlists',
+        item = readlist,
+        file_name = readlist_name,
+        item_catagory = readlist_catagory,
+        asset_dir=asset_dir
+        ) 

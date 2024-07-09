@@ -57,7 +57,7 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 readlist_catagory=check_key_exists('readlist_catagory', readlist),
                 series_search_params=check_key_exists('search_params', readlist, {}),
                 book_search_params=check_key_exists('book_search_params', readlist, {}),
-                readlist_prefix=check_key_exists('readlist_prefix', readlist, ''),
+                readlist_prefix=check_key_exists('readlist_prefix', readlist),
                 book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
                 series_ids=check_key_exists('series_ids', readlist, []),
                 blacklisted_book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
@@ -66,7 +66,8 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 ordered= check_key_exists('ordered', readlist, False),
                 overwrite = check_key_exists('overwrite', readlist, False),
                 readlist_catagories= readlist_catagories,
-                asset_dir = asset_dir
+                asset_dir = asset_dir,
+                cbl = check_key_exists('cbl', readlist)
                 )
 
 
