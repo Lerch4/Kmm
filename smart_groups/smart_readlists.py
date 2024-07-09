@@ -84,7 +84,8 @@ def make_smart_readlist(
     overwrite: bool = False,
     readlist_catagories = None,
     asset_dir = None,
-    cbl: str = None
+    cbl: str = None,
+    display_unmatched: bool = False
     ):
     '''
     Create or update readlist based on metadata of series or books
@@ -107,10 +108,21 @@ def make_smart_readlist(
         if cbl[:-4] != '.cbl': 
             cbl += '.cbl'
         cbl_loc = os.path.join(asset_dir, 'cbl', cbl)
-        r = session.match_readlist_cbl_from_path(cbl_loc)
-        book_ids = r.book_ids
+        match_response = session.match_readlist_cbl_from_path(cbl_loc)
+        book_ids = match_response.book_ids
+        unmatched = match_response.unmatched
         ordered = True
         overwrite = True
+
+        # print unmatched
+        print('Matching cbl File')
+        print(f'Number of Unmatched: {len(unmatched)}')
+        if display_unmatched:
+            for r in unmatched:
+                print(f"series: {r['request']['series']}")
+                print(f"number: {r['request']['number']}")
+                print()
+        print()
 
     else:
 
@@ -173,6 +185,9 @@ def make_smart_readlist(
 
     # post collection and return collection data
     readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
+
+
+
 
 
     # if response was to able to be converted print response
