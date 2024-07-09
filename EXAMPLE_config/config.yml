@@ -11,7 +11,7 @@ komga_url: <your_komga_server_url_here>
 
 
 # Collection Catagories are used to set prefix
-# and determine location of opster art and overlays
+# and determine location of poster art and overlays 
 collection_catagories : 
   General      : '{0}: '
   Series Group : '{1}: '
@@ -26,8 +26,6 @@ collection_catagories :
   Ages         : '{9}: '
 
 
-
-# Smart Collections:
 
 smart_collections : 
 
@@ -77,7 +75,39 @@ smart_collections :
     search_params:
       author: Alan Moore, writer 
 
-# readlist_catagories : 
 
-# smart_readlists :
+readlist_catagories :
+  General      : '{0}: '
+  Series Group : '{1}: '
+  Characters   : '{2}: '
+  Teams        : '{3}: '
+  Universe     : '{4}: '
+  Creators     : '{5}: '
+  Events       : '{6}: '
+  DC Era       : '{7.1}: '
+  Marvel Era   : '{7.2}: '
+  Publishers   : '{8}: '
+  Ages         : '{9}: '
+
+
+smart_readlists :
+  # This will create a readlist with the name {3}: 'Justice League: New 52'
+  # from a cbl file located in the assets/cbl directory
+  # Any current readlist with the name {3}: 'Justice League: New 52' will be overwritten
+  # cbl should match exact name of cbl file with or without file extension
+  # Books will be matched against the cbl file and unmatched books will be skipped
+  # If all books skipped no readlist will be made
+  # (Second Example) More info can be output on each unmatched by adding display_unmatched: True
+  # Poster art and overlay will be looked for in assets/readlists/Teams
+
+  - readlist_name: 'Justice League: New 52'
+    readlist_catagory: Teams
+    cbl: Justice League 006 (New 52)
+
+  - readlist_name: 'Justice League: Rebirth'
+    readlist_catagory: Teams
+    cbl: Justice League 007 (Rebirth)
+    display_unmatched: True
+
+
 
