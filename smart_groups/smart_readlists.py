@@ -70,10 +70,10 @@ def add_readlist_poster(
 def make_smart_readlist(
     session: KomgaSession,
     readlist_name: str,
-    readlist_catagory: str = None,
+    readlist_catagory: str| None = None,
     series_search_params: dict = {},
     book_search_params: dict = {},
-    readlist_prefix: str = None,
+    readlist_prefix: str = '',
     book_ids: list = [],
     series_ids: list = [],
     blacklisted_book_ids: list = [],
@@ -84,7 +84,7 @@ def make_smart_readlist(
     overwrite: bool = False,
     readlist_catagories = None,
     asset_dir = None,
-    cbl: str = None,
+    cbl: str| None = None,
     display_unmatched: bool = False
     ):
     '''
@@ -125,8 +125,7 @@ def make_smart_readlist(
         print()
 
     else:
-
-
+        
         # set default search_params
         if series_search_params == {} and book_search_params == {}:
             series_search_params = {'search': f'"{readlist_name}"'}
@@ -134,13 +133,18 @@ def make_smart_readlist(
         elif series_search_params == None and book_search_params == {}:
             book_search_params = {'search': f'"{readlist_name}"'}
 
-        #  if 'unpaged' not in search_params.keys():
-        #     search_params['unpaged'] = True 
 
+        if 'unpaged' not in series_search_params:
+            series_search_params['unpaged'] = True 
 
+        if 'unpaged' not in book_search_params:
+            book_search_params['unpaged'] = True 
+
+        
         # if there are book search params search for them
         if book_search_params != {}:
             book_list = content_list_from_search_params(session, 'books', book_search_params)
+        else: book_list = []
 
         # if there are series search params search for them 
         if series_search_params != {}:
