@@ -71,8 +71,8 @@ def make_smart_readlist(
     session: KomgaSession,
     readlist_name: str,
     readlist_catagory: str| None = None,
-    series_search_params: dict = {},
-    book_search_params: dict = {},
+    series_search_params: dict| None = {},
+    book_search_params: dict| None = {},
     readlist_prefix: str = '',
     book_ids: list = [],
     series_ids: list = [],
@@ -103,12 +103,17 @@ def make_smart_readlist(
     # trim item name
     readlist_name = readlist_name.strip()
 
-
+    # If has cbl use only that to make readlist, else check search params
     if cbl != None:
-        if cbl[:-4] != '.cbl': 
-            cbl += '.cbl'
-        cbl_loc = os.path.join(asset_dir, 'cbl', cbl)
-        match_response = session.match_readlist_cbl_from_path(cbl_loc)
+        if 'https://' in cbl:
+            match_response = session.match_readlist_cbl_from_url(cbl)
+
+        else:
+            if cbl[:-4] != '.cbl': 
+                cbl += '.cbl'
+            cbl_loc = os.path.join(asset_dir, 'cbl', cbl)
+            match_response = session.match_readlist_cbl_from_path(cbl_loc)
+
         book_ids = match_response.book_ids
         unmatched = match_response.unmatched
         ordered = True

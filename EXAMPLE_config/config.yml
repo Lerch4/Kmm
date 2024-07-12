@@ -68,7 +68,7 @@ smart_collections :
     search_params:
       search: '((penciller:(Jack Kirby)) OR (writer:(Jack Kirby)))'
 
-# This will create a collection called {5}: Jack Kirby
+# This will create a collection called {5}: Alan Moore
 # with all series with Alan Moore as writer,
   - collection_name: Alan Moore
     collection_catagory: Creators
@@ -91,23 +91,28 @@ readlist_catagories :
 
 
 smart_readlists :
+
   # This will create a readlist with the name {3}: 'Justice League: New 52'
   # from a cbl file located in the assets/cbl directory
   # Any current readlist with the name {3}: 'Justice League: New 52' will be overwritten
   # cbl should match exact name of cbl file with or without file extension
   # Books will be matched against the cbl file and unmatched books will be skipped
   # If all books skipped no readlist will be made
-  # (Second Example) More info can be output on each unmatched by adding display_unmatched: True
   # Poster art and overlay will be looked for in assets/readlists/Teams
-
   - readlist_name: 'Justice League: New 52'
     readlist_catagory: Teams
     cbl: Justice League 006 (New 52)
 
+  # More info can be output on each unmatched by adding display_unmatched: True
   - readlist_name: 'Justice League: Rebirth'
     readlist_catagory: Teams
     cbl: Justice League 007 (Rebirth)
     display_unmatched: True
 
+  # Readlists can be grabbed from web pages that display raw text of the cbl file
+  # Tested with cbl files from https://github.com/DieselTech/CBL-ReadingLists
 
+  - readlist_name: 'Batman: Night of the Owls'
+    readlist_catagory: Events
+    cbl: 'https://raw.githubusercontent.com/DieselTech/CBL-ReadingLists/main/DC/Events/unsorted/1%20-%20New%2052/DC65%20-%20Night%20of%20the%20Owls.cbl'
 

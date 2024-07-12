@@ -208,11 +208,11 @@ def _add_item_poster(
 
 def _update_existing_item(
         session: KomgaSession,
-        item_type: str,
+        item_type: str| None,
         data: dict,
-        item: KomgaReadlist|KomgaCollection = None,
-        item_id: str = None,
-        item_name: str = None,
+        item: KomgaReadlist|KomgaCollection| None = None,
+        item_id: str| None = None,
+        item_name: str| None = None,
         overwrite: bool = False
         ):
     '''

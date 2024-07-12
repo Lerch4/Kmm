@@ -13,7 +13,7 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
 
 ### Still too be Implemented
 - [x] Ability to add readlists from .cbl file
-    - [ ] Ability to add community .cbl lists
+    - [X] Ability to add community .cbl lists
 - [ ] Add / edit / scrape series metadata (series.json)
 - [ ] Add / edit / scrape book metadata (ComicInfo.xml)
 - [ ] Add scheduling
