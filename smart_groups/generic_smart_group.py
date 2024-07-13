@@ -321,7 +321,7 @@ def content_list_from_search_params(session: KomgaSession, item_type: str, searc
 
 def get_overlay_path(item_type: str, item_catagory: str, asset_dir: str):
 
-    if os.path.exists(os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')):
+    if item_catagory != None and os.path.exists(os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')):
         return os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')
     elif os.path.exists(os.path.join(asset_dir, item_type, 'overlay.png')):
         return os.path.join(asset_dir, item_type, 'overlay.png')
