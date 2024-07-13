@@ -25,13 +25,13 @@ def make_smart_user_generated_item(
         item_name: str,
         search_params: dict = None,
         item_prefix: str = None,
-        item_catagory: str = None,
+        item_category: str = None,
         content_id_list: list = None,
         blacklisted_content_ids: list = None,
         blacklisted_search_params: dict = None,
         ordered: bool = False,
         overwrite: bool = False,
-        item_catagories = None,
+        item_categories = None,
         asset_dir = None
         ):
         '''
@@ -43,7 +43,7 @@ def make_smart_user_generated_item(
         :param search_params: dictionary of search parameters available for item type
         :param item_prefix: Prefix to be added to name for sorting
         :param item_name: Item name
-        :param item_catagory: Catagory of item to be used for sorting, will be overridden by item_prefix
+        :param item_category: Category of item to be used for sorting, will be overridden by item_prefix
         :param content_id_list: List of content ids of content to be added
         :param blacklisted_content_ids: List of content ids of content to be excluded
         :param blacklisted_search_params: Search parameters for content to be excluded
@@ -63,11 +63,11 @@ def make_smart_user_generated_item(
 
         match item_type:
             case 'collections':
-                # item_catagories = collection_catagories
+                # item_categories = collection_categories
                 content_type = 'series'
 
             case 'readlists':
-                # item_catagories = readlist_catagories
+                # item_categories = readlist_categories
                 content_type = 'books'
 
             case _:
@@ -75,7 +75,7 @@ def make_smart_user_generated_item(
     
         
 
-        item_prefix = make_prefix(item_prefix, item_catagory, item_catagories)
+        item_prefix = make_prefix(item_prefix, item_category, item_categories)
 
 
         content_list = session._search(content_type, search_params).content
@@ -92,7 +92,7 @@ def make_smart_user_generated_item(
         if isinstance(item, Response):
             print(item.text)
 
-        _add_item_poster(session,item_type=item_type, item = item, item_name = item_name, item_catagory = item_catagory, asset_dir=asset_dir)
+        _add_item_poster(session,item_type=item_type, item = item, item_name = item_name, item_category = item_category, asset_dir=asset_dir)
 
 
 
@@ -141,7 +141,7 @@ def _add_item_poster(
         item_type: str,
         item: KomgaCollection| KomgaReadlist| KomgaBook| KomgaSeries,
         file_name: str,
-        item_catagory: str,
+        item_category: str,
         asset_dir: str,
         overlay_mode: str = 'no_asset'
         ) -> None:
@@ -153,8 +153,8 @@ def _add_item_poster(
     '''
     poster_dir = os.path.join(asset_dir, item_type)
         
-    if item_catagory != None and os.path.exists(f'{poster_dir}\\{item_catagory}'):
-        poster_dir += '\\' + item_catagory
+    if item_category != None and os.path.exists(f'{poster_dir}\\{item_category}'):
+        poster_dir += '\\' + item_category
 
     poster_file_name = get_poster_file_name(file_name, poster_dir)
 
@@ -167,7 +167,7 @@ def _add_item_poster(
 
 
         if overlay_mode == 'force':
-            overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
+            overlay_path = get_overlay_path(item_type, item_category, asset_dir)
             
             if overlay_path != None:
                 print('Using Overlay')
@@ -190,7 +190,7 @@ def _add_item_poster(
         print_has_poster_asset(False)
 
         if overlay_mode in ['no_asset', 'force']: 
-            overlay_path = get_overlay_path(item_type, item_catagory, asset_dir)
+            overlay_path = get_overlay_path(item_type, item_category, asset_dir)
             
             if overlay_path != None:
                 print('Using Overlay')
@@ -319,10 +319,10 @@ def content_list_from_search_params(session: KomgaSession, item_type: str, searc
     return content_list
 
 
-def get_overlay_path(item_type: str, item_catagory: str, asset_dir: str):
+def get_overlay_path(item_type: str, item_category: str, asset_dir: str):
 
-    if item_catagory != None and os.path.exists(os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')):
-        return os.path.join(asset_dir, item_type, item_catagory, 'overlay.png')
+    if item_category != None and os.path.exists(os.path.join(asset_dir, item_type, item_category, 'overlay.png')):
+        return os.path.join(asset_dir, item_type, item_category, 'overlay.png')
     elif os.path.exists(os.path.join(asset_dir, item_type, 'overlay.png')):
         return os.path.join(asset_dir, item_type, 'overlay.png')
     elif os.path.exists(os.path.join(asset_dir, 'overlay.png')):
@@ -353,12 +353,12 @@ def upload_image_object(session: KomgaSession, item_type: str, item_id: str, ima
     os.removedirs('temp')
 
 
-def determine_poster_file_path(item_type: str, item_catagory: str, asset_dir: str):
+def determine_poster_file_path(item_type: str, item_category: str, asset_dir: str):
 
     poster_dir = os.path.join(asset_dir, item_type)
     
-    if item_catagory != None and os.path.exists(f'{poster_dir}\\{item_catagory}'):
-        poster_dir += '\\' + item_catagory
+    if item_category != None and os.path.exists(f'{poster_dir}\\{item_category}'):
+        poster_dir += '\\' + item_category
 
     return poster_dir
 

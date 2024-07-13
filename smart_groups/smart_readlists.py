@@ -55,7 +55,7 @@ def add_readlist_poster(
     session: KomgaSession,
     readlist: KomgaReadlist,
     readlist_name: str,
-    readlist_catagory: str
+    readlist_category: str
     ) -> None:
 
     _add_item_poster(
@@ -63,14 +63,14 @@ def add_readlist_poster(
         'readlist',
         item=readlist,
         item_name = readlist_name,
-        item_catagory = readlist_catagory
+        item_category = readlist_category
         )
 
 
 def make_smart_readlist(
     session: KomgaSession,
     readlist_name: str,
-    readlist_catagory: str| None = None,
+    readlist_category: str| None = None,
     series_search_params: dict| None = {},
     book_search_params: dict| None = {},
     readlist_prefix: str = '',
@@ -82,7 +82,7 @@ def make_smart_readlist(
     blacklisted_series_search_params: dict = {},
     ordered: bool = False,
     overwrite: bool = False,
-    readlist_catagories = None,
+    readlist_categories = None,
     asset_dir = None,
     cbl: str| None = None,
     display_unmatched: bool = False
@@ -93,7 +93,7 @@ def make_smart_readlist(
     :param search_params: dictionary of search parameters available for item type
     :param item_prefix: Prefix to be added to name for sorting
     :param item_name: Item name
-    :param item_catagory: Catagory of item to be used for sorting, will be overridden by item_prefix
+    :param item_category: Catagory of item to be used for sorting, will be overridden by item_prefix
     :param content_id_list: List of content ids of content to be added
     :param blacklisted_content_ids: List of content ids of content to be excluded
     :param blacklisted_search_params: Search parameters for content to be excluded
@@ -189,7 +189,7 @@ def make_smart_readlist(
            book_ids = remove_blacklisted_content(book_ids, blacklisted_book_ids)
 
     # determine prefix
-    readlist_prefix = make_prefix(readlist_prefix, readlist_catagory, readlist_catagories)
+    readlist_prefix = make_prefix(readlist_prefix, readlist_category, readlist_categories)
 
 
     # post collection and return collection data
@@ -209,6 +209,6 @@ def make_smart_readlist(
         item_type='readlists',
         item = readlist,
         file_name = readlist_name,
-        item_catagory = readlist_catagory,
+        item_category = readlist_category,
         asset_dir=asset_dir
         ) 

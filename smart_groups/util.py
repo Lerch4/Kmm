@@ -78,9 +78,9 @@ def get_backup_name(search_params: dict) -> str | None:
     return name
 
 
-def make_prefix(prefix: str, catagory: str, catagories: dict) -> str:
-    if prefix == '' and catagory in catagories:
-        prefix = catagories[catagory]
+def make_prefix(prefix: str, category: str, categories: dict) -> str:
+    if prefix == '' and category in categories:
+        prefix = categories[category]
     return prefix
 
 def make_content_id_key(item_type: str):
