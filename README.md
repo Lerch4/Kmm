@@ -8,16 +8,18 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
     - Orginize created / managed collections and readlists into groups with prefixs automaticly being added to its name.
     - Add custom poster art for collections and readlists.
     - Add an overlay to custom or default poster art based on its collection or readlist group.
+    - Add readlists from matched .cbl file
+        - Add community .cbl lists from raw url (tested with https://github.com/DieselTech/CBL-ReadingLists)
 
+### To be implemented
+- [ ] Make readlists from other readlists
+- [ ] Make readlist from multiple cbl files
 
-
-### Still too be Implemented
-- [x] Ability to add readlists from .cbl file
-    - [X] Ability to add community .cbl lists
-- [ ] Add / edit / scrape series metadata (series.json)
-- [ ] Add / edit / scrape book metadata (ComicInfo.xml)
-- [ ] Add scheduling
-
+- Long Term Goals
+    - [ ] Add optional cashing for Komga data and community cbl files
+    - [ ] Add / edit / scrape series metadata (series.json)
+    - [ ] Add / edit / scrape book metadata (ComicInfo.xml)
+    - [ ] Add scheduling
 
 
 
