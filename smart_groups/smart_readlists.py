@@ -85,7 +85,8 @@ def make_smart_readlist(
     readlist_categories = None,
     asset_dir = None,
     cbl: str| None = None,
-    display_unmatched: bool = False
+    display_unmatched: bool = False,
+    overlay_mode: str = 'no_asset'
     ):
     '''
     Create or update readlist based on metadata of series or books
@@ -210,5 +211,6 @@ def make_smart_readlist(
         item = readlist,
         file_name = readlist_name,
         item_category = readlist_category,
-        asset_dir=asset_dir
+        asset_dir=asset_dir,
+        overlay_mode = overlay_mode
         ) 

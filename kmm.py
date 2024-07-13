@@ -68,7 +68,8 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
                 readlist_categories= readlist_categories,
                 asset_dir = asset_dir,
                 cbl = check_key_exists('cbl', readlist),
-                display_unmatched = check_key_exists('display_unmatched', readlist, False)
+                display_unmatched = check_key_exists('display_unmatched', readlist, False),
+                overlay_mode=check_key_exists('overlay_mode',readlist ,'no_asset')
                 )
 
 

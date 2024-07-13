@@ -1,0 +1,48 @@
+
+### Available parameters (from [Komga API](https://komga.org/docs/api/rest))
+- Series
+	- search: `string`
+	- library_id : `list[string] | string`
+	- collection_id : `list[string] | string`
+	- status : `'ENDED' | 'ONGOING' | 'ABANDONED' | 'HIATUS'`
+	- read_status : `'UNREAD' | 'READ' | 'IN_PROGRESS'`
+	- publisher : `list[string] | string`
+	- language : `list[string] | string`
+	- genre : `list[string] | string`
+	- tag: `list[string] | string`
+	- age_rating: `list[string] | string`
+	- release_year: `list[string] | string`
+	- sharing_label: `list[string] | string`
+	- deleted: `bool`
+	- complete: `bool`
+	- oneshot: `bool`
+	- unpaged: `bool`
+	- default - `False`
+	- search_regex: `string`
+	- page: `integer`
+	- size: `integer`
+	- sort: `list[string] | string`
+	- author: `list[string] | string`
+- Book
+	- search: `string`
+	- library_id: `list[string]`
+	- media_status: `UNKNOWN, ERROR, READY, UNSUPPORTED, OUTDATED`
+	- read_status : `UNREAD, READ, IN_PROGRESS`
+	- released_after: `string($date)`
+	- tag: `list[string]`
+	- unpaged: `bool`
+	- page: `intger`
+	- size: `integer`
+	- sort: `list[string]`
+- Collection
+	- search: `string`
+	- library_id: `list[string]`
+	- unpaged: `bool`
+	- page: `intger`
+	- size: `integer`
+- ReadList
+	- search: `string`
+	- library_id: `list[string]`
+	- unpaged: `bool`
+	- page: `intger`
+	- size: `integer`
