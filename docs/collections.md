@@ -1,5 +1,5 @@
 # Collections
-- Collectoins can be added through smart searching for series through paremeters given by the Komga api. Collections can also be added by providing a list series ids or other collection ids.
+- Collections can be added through smart searching for series through paremeters given by the Komga api. Collections can also be added by providing a list series ids or other collection ids.
 
 ### Collection Parameters
 ```    

@@ -1,5 +1,5 @@
 # Readlist
-- Readlists can be added through smart searching for books or series(expirimental) or by adding cbl files froma url or the assets folder.
+- Readlists can be added through smart searching for books or series(expirimental) or by adding cbl files from a url or the assets folder.
 
 ### Readlist Parameters
 ```    

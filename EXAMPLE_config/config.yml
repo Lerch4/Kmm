@@ -47,7 +47,7 @@ smart_collections :
     collection_category: Characters
 
 # This will create a collection called {1}: Terminator
-# with all series returned from search for 'Terminator',
+# with all series returned from search for 'Terminator'
 # except with series that include 'Deathstroke' or 'X-Terminators'
   - collection_name: Terminator
     collection_category: Series Group
@@ -55,21 +55,21 @@ smart_collections :
       search: '"Terminator" NOT ("Deathstroke" OR "X-Terminators")'
 
 # This will create a collection called {8}: Image
-# with all series from publisher 'Image',
+# with all series from publisher 'Image'
   - collection_name: Image
     collection_category: Publishers
     search_params:
       publisher: Image
 
 # This will create a collection called {5}: Jack Kirby
-# with all series with Jack Kirby as penciller or writer,
+# with all series with Jack Kirby as penciller or writer
   - collection_name: Jack Kirby
     collection_category: Creators
     search_params:
       search: '((penciller:(Jack Kirby)) OR (writer:(Jack Kirby)))'
 
 # This will create a collection called {5}: Alan Moore
-# with all series with Alan Moore as writer,
+# with all series with Alan Moore as writer
   - collection_name: Alan Moore
     collection_category: Creators
     search_params:
@@ -106,9 +106,9 @@ readlist_categories :
 
 smart_readlists :
 
-  # This will create a readlist with the name {3}: 'Justice League: New 52'
+  # This will create a readlist with the name {1.3}: 'Justice League: New 52'
   # from a cbl file located in the assets/cbl directory
-  # Any current readlist with the name {3}: 'Justice League: New 52' will be overwritten
+  # Any current readlist with the name {1.3}: 'Justice League: New 52' will be overwritten
   # cbl should match exact name of cbl file with or without file extension
   # Books will be matched against the cbl file and unmatched books will be skipped
   # If all books skipped no readlist will be made
