@@ -12,8 +12,8 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
         - Add community .cbl lists from raw url (tested with https://github.com/DieselTech/CBL-ReadingLists)
 
 ### To be implemented
-- [ ] Make readlists from other readlists
-- [ ] Make readlist from multiple cbl files
+- [X] Make readlists from other readlists
+- [X] Make readlist from multiple cbl files
 
 - Long Term Goals
     - [ ] Add optional cashing for Komga data and community cbl files

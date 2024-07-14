@@ -77,15 +77,15 @@ smart_collections :
 
 
 readlist_categories :
-  General         : '{0}: '
+  General             : '{0}: '
 
-  DC Complete     : '{1.0}: '
-  DC Eras         : '{1.1}: '  
-  DC Characters   : '{1.2}: '
-  DC Teams        : '{1.3}: '
-  DC Universe     : '{1.4}: '
-  DC Events       : '{1.5}: '
-  DC Creator Runs : '{1.6}: '
+  DC Complete         : '{1.0}: '
+  DC Eras             : '{1.1}: '  
+  DC Characters       : '{1.2}: '
+  DC Teams            : '{1.3}: '
+  DC Universe         : '{1.4}: '
+  DC Events           : '{1.5}: '
+  DC Creator Runs     : '{1.6}: '
   
   Marvel Complete     : '{2.0}: '
   Marvel Eras         : '{2.1}: '  
@@ -95,13 +95,13 @@ readlist_categories :
   Marvel Events       : '{2.5}: '
   Marvel Creator Runs : '{2.6}: '
 
-  Indie Complete     : '{3.0}: '
-  Indie Era          : '{3.1}: '  
-  Indie Characters   : '{3.2}: '
-  Indie Teams        : '{3.3}: '
-  Indie Universe     : '{3.4}: '
-  Indie Events       : '{3.5}: '
-  Indie Creator Runs : '{3.6}: '
+  Indie Complete      : '{3.0}: '
+  Indie Era           : '{3.1}: '  
+  Indie Characters    : '{3.2}: '
+  Indie Teams         : '{3.3}: '
+  Indie Universe      : '{3.4}: '
+  Indie Events        : '{3.5}: '
+  Indie Creator Runs  : '{3.6}: '
 
 
 smart_readlists :
@@ -130,3 +130,9 @@ smart_readlists :
     readlist_category: DC Events
     cbl: 'https://raw.githubusercontent.com/DieselTech/CBL-ReadingLists/main/DC/Events/unsorted/1%20-%20New%2052/DC65%20-%20Night%20of%20the%20Owls.cbl'
 
+  # Multiple cbl files can be used if entered as a list
+  - readlist_name: 'Batman: Modern Age: Parts 1 & 2'
+    readlist_category: DC Characters
+    cbl:
+    - 'https://github.com/DieselTech/CBL-ReadingLists/raw/main/DC/Characters/Batman/Batman%20-%20Modern%20Age/%5BDC%5D%20Batman%20Modern%20Age%20-%20Part%2001%20Year%20One%20%5B1987-2009%5D.cbl'
+    - 'https://github.com/DieselTech/CBL-ReadingLists/raw/main/DC/Characters/Batman/Batman%20-%20Modern%20Age/%5BDC%5D%20Batman%20Modern%20Age%20-%20Part%2002%20Year%20Two%20The%20Long%20Halloween%20%5B1990-2007%5D.cbl'

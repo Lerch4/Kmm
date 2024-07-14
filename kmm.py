@@ -52,25 +52,27 @@ def run_smart_readlists(session: KomgaSession, asset_dir=asset_dir) -> None:
         print_start_new_group('readlists', readlist)
 
         make_smart_readlist(
-                session,
-                readlist_name=check_key_exists('readlist_name', readlist),
-                readlist_category=check_key_exists('readlist_category', readlist),
-                series_search_params=check_key_exists('search_params', readlist, {}),
-                book_search_params=check_key_exists('book_search_params', readlist, {}),
-                readlist_prefix=check_key_exists('readlist_prefix', readlist, ''),
-                book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
-                series_ids=check_key_exists('series_ids', readlist, []),
-                blacklisted_book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
-                blacklisted_book_search_params=check_key_exists('blacklisted_book_search_params', readlist, {}),
-                blacklisted_series_search_params=check_key_exists('blacklisted_series_search_params', readlist, {}),
-                ordered= check_key_exists('ordered', readlist, False),
-                overwrite = check_key_exists('overwrite', readlist, False),
-                readlist_categories= readlist_categories,
-                asset_dir = asset_dir,
-                cbl = check_key_exists('cbl', readlist),
-                display_unmatched = check_key_exists('display_unmatched', readlist, False),
-                overlay_mode=check_key_exists('overlay_mode',readlist ,'no_asset')
-                )
+            session,
+            readlist_name=check_key_exists('readlist_name', readlist),
+            readlist_category=check_key_exists('readlist_category', readlist),
+            series_search_params=check_key_exists('search_params', readlist, {}),
+            book_search_params=check_key_exists('book_search_params', readlist, {}),
+            readlist_prefix=check_key_exists('readlist_prefix', readlist, ''),
+            book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
+            series_ids=check_key_exists('series_ids', readlist, []),
+            blacklisted_book_ids=check_key_exists('blacklisted_book_ids', readlist, []),
+            blacklisted_book_search_params=check_key_exists('blacklisted_book_search_params', readlist, {}),
+            blacklisted_series_search_params=check_key_exists('blacklisted_series_search_params', readlist, {}),
+            ordered= check_key_exists('ordered', readlist, False),
+            overwrite = check_key_exists('overwrite', readlist, False),
+            readlist_categories= readlist_categories,
+            asset_dir = asset_dir,
+            cbl = check_key_exists('cbl', readlist),
+            display_unmatched = check_key_exists('display_unmatched', readlist, False),
+            overlay_mode=check_key_exists('overlay_mode',readlist ,'no_asset'),
+            parent_readlist_ids=check_key_exists('parent_readlist_ids', readlist, []),
+            parent_readlist_names=check_key_exists('parent_readlist_names', readlist, []),
+            )
 
 
 # _____________________________________________________________________________________________________

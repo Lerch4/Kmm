@@ -7,7 +7,7 @@ readlist_name: str # required
 overlay_mode: 'no_asset'| 'force' | 'disable'
 
 # For adding from cbl(will be used over search)
-cbl: str # file path or url
+cbl: str| list[str] # file path or url
 display_unmatched: bool
 
 # For adding from search
@@ -22,6 +22,8 @@ blacklisted_book_search_params: dict | list[dict]
 blacklisted_series_search_params: dict | listlist[dict]
 ordered: bool
 overwrite: bool
+parent_readlist_ids: list[str]
+parent_readlist_names: list[str]
 
 ```
 

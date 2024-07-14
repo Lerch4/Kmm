@@ -84,9 +84,11 @@ def make_smart_readlist(
     overwrite: bool = False,
     readlist_categories = None,
     asset_dir = None,
-    cbl: str| None = None,
+    cbl: str| list[str]| None = None,
     display_unmatched: bool = False,
-    overlay_mode: str = 'no_asset'
+    overlay_mode: str = 'no_asset',
+    parent_readlist_ids: list[str] = [],
+    parent_readlist_names: list[str] = [],
     ):
     '''
     Create or update readlist based on metadata of series or books
@@ -103,32 +105,44 @@ def make_smart_readlist(
     '''
     # trim item name
     readlist_name = readlist_name.strip()
-
     # If has cbl use only that to make readlist, else check search params
     if cbl != None:
-        if 'https://' in cbl:
-            match_response = session.match_readlist_cbl_from_url(cbl)
+        if type(cbl) == str:
+            cbl = [cbl]
+           
 
-        else:
-            if cbl[:-4] != '.cbl': 
-                cbl += '.cbl'
-            cbl_loc = os.path.join(asset_dir, 'cbl', cbl)
-            match_response = session.match_readlist_cbl_from_path(cbl_loc)
+        book_ids = []
+        unmatched = []
 
-        book_ids = match_response.book_ids
-        unmatched = match_response.unmatched
-        ordered = True
-        overwrite = True
 
-        # print unmatched
-        print('Matching cbl File')
-        print(f'Number of Unmatched: {len(unmatched)}')
-        if display_unmatched:
-            for r in unmatched:
-                print(f"series: {r['request']['series']}")
-                print(f"number: {r['request']['number']}")
-                print()
-        print()
+        for l in cbl:
+
+            if 'https://' in l:
+                match_response = session.match_readlist_cbl_from_url(l)
+
+            else:
+                if l[:-4] != '.cbl': 
+                    l += '.cbl'
+                print(l)
+                cbl_loc = os.path.join(asset_dir, 'cbl', str(l))
+                match_response = session.match_readlist_cbl_from_path(cbl_loc)
+
+            book_ids.extend(match_response.book_ids) 
+
+            unmatched.extend(match_response.unmatched)
+
+            ordered = True
+            overwrite = True
+
+            # print unmatched
+            print('Matching cbl File')
+            print(f'Number of Unmatched: {len(unmatched)}')
+            if display_unmatched:
+                for i in unmatched:
+                    print(f"series: {i['series']}")
+                    print(f"number: {i['number']}")
+                    print()
+            print()
 
     else:
         
@@ -165,6 +179,25 @@ def make_smart_readlist(
         if book_list != []:
             book_ids.extend(make_id_list(book_list)) 
 
+
+
+        # add from parent readlists
+        if parent_readlist_names != []:
+             for readlist_name in parent_readlist_names:
+                  parent_readlist = session.get_readlist(readlist_name=readlist_name)
+                  parent_readlist_ids.append(parent_readlist.id)
+
+        if parent_readlist_ids != []:
+             for readlist_id in parent_readlist_ids:
+                  books_from_readlist = session.books_in_readlist(readlist_id)
+
+                  for book in books_from_readlist:
+                       book_ids.append(book.id)
+
+
+
+
+
         # remove blacklisted
         blacklisted_books = []
         if blacklisted_book_search_params != {}:
@@ -193,7 +226,7 @@ def make_smart_readlist(
     readlist_prefix = make_prefix(readlist_prefix, readlist_category, readlist_categories)
 
 
-    # post collection and return collection data
+    # post readlist and return readlist data
     readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
 
 
