@@ -34,7 +34,7 @@ Kmm is a script to help customize and organize your [Komga](https://komga.org/) 
 
 - Run kmm.py
 ```
-python kmm.py
+python src/kmm.py
 ```
 
 <!-- See [docs](./docs/) for further usage examples. -->

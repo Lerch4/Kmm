@@ -13,7 +13,7 @@ def remove_duplicates(data: list) -> list:
 
 def check_key_exists(key: str, dictionary: dict, missing_return_value = None):
     
-    if key in dictionary.keys():    
+    if key in dictionary:    
         return dictionary[key]
 
     else:    

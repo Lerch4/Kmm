@@ -1,14 +1,14 @@
 import os
-
-from config_adapter import config
+import pathlib
 from komgapy import KomgaSession
 from util import check_key_exists
 from smart_groups.smart_collections import make_smart_collection
 from smart_groups.smart_readlists import make_smart_readlist
 from smart_groups.print_outputs import print_start_new_group
+from config_adapter import config
 
 
-asset_dir = check_key_exists('asset_dir', config, os.path.join(os.path.dirname(__file__), 'config', 'assets'))
+asset_dir = check_key_exists('asset_dir', config, os.path.join(pathlib.Path(__file__).parents[1], 'config', 'assets'))
 smart_collections = check_key_exists('smart_collections', config, [])
 collection_categories = check_key_exists('collection_categories', config, [])
 smart_readlists = check_key_exists('smart_readlists', config, [])
