@@ -13,7 +13,7 @@ from komgapy import (
     KomgaReadlist,
     )
 
-from smart_groups.print_outputs import(
+from print_outputs import(
     print_item_data,
     print_has_poster_asset
 )

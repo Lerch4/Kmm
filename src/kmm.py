@@ -4,7 +4,7 @@ from komgapy import KomgaSession
 from util import check_key_exists
 from smart_groups.smart_collections import make_smart_collection
 from smart_groups.smart_readlists import make_smart_readlist
-from smart_groups.print_outputs import print_start_new_group
+from print_outputs import print_start_new_group
 from config_adapter import config
 
 

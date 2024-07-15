@@ -4,7 +4,7 @@
 ### Collection Parameters
 ```    
 collection_name: str # required
-collection_category: list[dict]
+collection_category: str
 search_params: list[dict]
 collection_prefix: str
 series_ids: list[str]
