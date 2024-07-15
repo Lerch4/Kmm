@@ -107,25 +107,24 @@ def make_smart_readlist(
     readlist_name = readlist_name.strip()
     # If has cbl use only that to make readlist, else check search params
     if cbl != None:
+
+        # convert string to list if only 1 file
         if type(cbl) == str:
             cbl = [cbl]
            
-
         book_ids = []
         unmatched = []
-
 
         for l in cbl:
 
             if 'https://' in l:
-                match_response = session.match_readlist_cbl_from_url(l)
+                match_response = session.match_readlist_cbl(l, input='url')
 
             else:
                 if l[:-4] != '.cbl': 
                     l += '.cbl'
-                print(l)
                 cbl_loc = os.path.join(asset_dir, 'cbl', str(l))
-                match_response = session.match_readlist_cbl_from_path(cbl_loc)
+                match_response = session.match_readlist_cbl(cbl_loc)
 
             book_ids.extend(match_response.book_ids) 
 
@@ -134,15 +133,14 @@ def make_smart_readlist(
             ordered = True
             overwrite = True
 
-            # print unmatched
-            print('Matching cbl File')
-            print(f'Number of Unmatched: {len(unmatched)}')
-            if display_unmatched:
-                for i in unmatched:
-                    print(f"series: {i['series']}")
-                    print(f"number: {i['number']}")
-                    print()
-            print()
+        print('Matching cbl File')
+        print(f'Number of Unmatched: {len(unmatched)}')
+        if display_unmatched:
+            for i in unmatched:
+                print(f"series: {i['series']}")
+                print(f"number: {i['number']}")
+                print()
+        print()
 
     else:
         
@@ -180,7 +178,6 @@ def make_smart_readlist(
             book_ids.extend(make_id_list(book_list)) 
 
 
-
         # add from parent readlists
         if parent_readlist_names != []:
              for readlist_name in parent_readlist_names:
@@ -193,9 +190,6 @@ def make_smart_readlist(
 
                   for book in books_from_readlist:
                        book_ids.append(book.id)
-
-
-
 
 
         # remove blacklisted
@@ -228,9 +222,6 @@ def make_smart_readlist(
 
     # post readlist and return readlist data
     readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
-
-
-
 
 
     # if response was to able to be converted print response
