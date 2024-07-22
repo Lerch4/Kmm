@@ -11,7 +11,7 @@ cbl: str| list[str] # file path or url
 display_unmatched: bool
 
 # For adding from search
-readlist_category: list[dict]
+readlist_category: str
 series_search_params: list[dict]
 book_search_params: list[dict]
 readlist_prefix: str

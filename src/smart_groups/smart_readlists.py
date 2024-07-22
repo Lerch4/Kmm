@@ -21,8 +21,7 @@ def update_existing_readlist(
     ) -> KomgaReadlist:  
 
     return _update_existing_item(
-        session,
-        'readlists',
+        session.readlists,
         data = data,
         item = readlist,
         item_id = readlist_id,
@@ -41,8 +40,7 @@ def post_readlist(
     ) -> KomgaReadlist | KomgaErrorResponse: 
 
     return _post_user_generated_item(
-        session,
-        'readlists',
+        session.readlists,
         readlist_name,
         book_list,
         readlist_prefix,
@@ -59,8 +57,7 @@ def add_readlist_poster(
     ) -> None:
 
     _add_item_poster(
-        session,
-        'readlist',
+        session.readlists,
         item=readlist,
         item_name = readlist_name,
         item_category = readlist_category
@@ -118,13 +115,13 @@ def make_smart_readlist(
         for l in cbl:
 
             if 'https://' in l:
-                match_response = session.match_readlist_cbl(l, input='url')
+                match_response = session.readlists.match_cbl(l, input='url')
 
             else:
                 if l[:-4] != '.cbl': 
                     l += '.cbl'
                 cbl_loc = os.path.join(asset_dir, 'cbl', str(l))
-                match_response = session.match_readlist_cbl(cbl_loc)
+                match_response = session.readlists.match_cbl(cbl_loc)
 
             book_ids.extend(match_response.book_ids) 
 
@@ -161,16 +158,16 @@ def make_smart_readlist(
         
         # if there are book search params search for them
         if book_search_params != {}:
-            book_list = content_list_from_search_params(session, 'books', book_search_params)
+            book_list = content_list_from_search_params(session.books, book_search_params)
         else: book_list = []
 
         # if there are series search params search for them 
         if series_search_params != {}:
 
-            series_list = content_list_from_search_params(session, 'series', series_search_params)
+            series_list = content_list_from_search_params(session.series, series_search_params)
             series_ids.extend( make_id_list(series_list))
             for id in series_ids:
-                    for book in session.books_in_series(id).content:
+                    for book in session.series.books(id).content:
                         book_list.append(book)
 
         # add searched book ids to book id list
@@ -181,12 +178,12 @@ def make_smart_readlist(
         # add from parent readlists
         if parent_readlist_names != []:
              for readlist_name in parent_readlist_names:
-                  parent_readlist = session.get_readlist(readlist_name=readlist_name)
+                  parent_readlist = session.readlists.get(readlist_name=readlist_name)
                   parent_readlist_ids.append(parent_readlist.id)
 
         if parent_readlist_ids != []:
              for readlist_id in parent_readlist_ids:
-                  books_from_readlist = session.books_in_readlist(readlist_id)
+                  books_from_readlist = session.readlists.books(readlist_id)
 
                   for book in books_from_readlist:
                        book_ids.append(book.id)
@@ -195,10 +192,10 @@ def make_smart_readlist(
         # remove blacklisted
         blacklisted_books = []
         if blacklisted_book_search_params != {}:
-            blacklisted_books = content_list_from_search_params(session, 'books', blacklisted_book_search_params)
+            blacklisted_books = content_list_from_search_params(session.books, blacklisted_book_search_params)
 
         if blacklisted_series_search_params != {}:
-            blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_series_search_params)
+            blacklisted_series = content_list_from_search_params(session.series, blacklisted_series_search_params)
 
             for series in blacklisted_series:
                 blacklisted_series_ids.append(series.id)
@@ -206,7 +203,7 @@ def make_smart_readlist(
 
         if blacklisted_series_ids != []:
             for series_id in blacklisted_series_ids:
-                blacklisted_books.extend(session.books_in_series(series_id).content)
+                blacklisted_books.extend(session.series.books(series_id).content)
 
         if blacklisted_books != []:
             for book in blacklisted_books:
@@ -221,7 +218,7 @@ def make_smart_readlist(
 
 
     # post readlist and return readlist data
-    readlist = _post_user_generated_item(session,'readlists', readlist_name, book_ids, readlist_prefix, ordered, overwrite)
+    readlist = _post_user_generated_item(session.readlists, readlist_name, book_ids, readlist_prefix, ordered, overwrite)
 
 
     # if response was to able to be converted print response
@@ -230,8 +227,7 @@ def make_smart_readlist(
 
 
     _add_item_poster(
-        session,
-        item_type='readlists',
+        session.readlists,
         item = readlist,
         file_name = readlist_name,
         item_category = readlist_category,

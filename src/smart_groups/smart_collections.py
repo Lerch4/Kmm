@@ -27,8 +27,7 @@ def update_existing_collection(
     '''
 
     return _update_existing_item(
-         session,
-         'collections',
+         session.collections,
          data = data,
          item = collection,
          item_id = collection_id,
@@ -49,8 +48,7 @@ def post_collection(
     '''
 
     return _post_user_generated_item(
-         session,
-         'collections',
+         session.collections,
          collection_name,
          series_list,
          collection_prefix,
@@ -70,8 +68,7 @@ def add_collection_poster(
     '''
 
     return _add_item_poster(
-         session,
-         'collections',
+         session.collections,
          item = collection,
          item_name = collection_name,
          item_category = collection_category
@@ -121,7 +118,7 @@ def make_smart_collection(
             if search_params == {}:
                 search_params = {'search': f'"{collection_name}"'}
 
-            series_list = content_list_from_search_params(session, 'series', search_params)
+            series_list = content_list_from_search_params(session.series, search_params)
 
             series_ids.extend(make_id_list(series_list))
         
@@ -129,12 +126,12 @@ def make_smart_collection(
         # add from parent collections
         if parent_collection_names != []:
              for collection_name in parent_collection_names:
-                  parent_collection = session.get_collection(collection_name=collection_name)
+                  parent_collection = session.collections.get(collection_name=collection_name)
                   parent_collection_ids.append(parent_collection.id)
 
         if parent_collection_ids != []:
              for collection_id in parent_collection_ids:
-                  series_from_collection = session.series_in_collection(collection_id)
+                  series_from_collection = session.collections.series(collection_id)
 
                   for series in series_from_collection:
                        series_ids.append(series.id)
@@ -143,7 +140,7 @@ def make_smart_collection(
         # remove blacklisted
         if blacklisted_search_params !={}:
 
-            blacklisted_series = content_list_from_search_params(session, 'series', blacklisted_search_params)
+            blacklisted_series = content_list_from_search_params(session.series, blacklisted_search_params)
             for series in blacklisted_series:
                 blacklisted_series_ids.append(series.id)
 
@@ -156,14 +153,14 @@ def make_smart_collection(
 
         # post collection and return collection data
         if series_ids != []:
-            collection = _post_user_generated_item(session,'collections', collection_name, series_ids, collection_prefix, ordered, overwrite)
+            collection = _post_user_generated_item(session.collections, collection_name, series_ids, collection_prefix, ordered, overwrite)
 
 
             if isinstance(collection, Response):
                 print(collection.text)
         else:
             try:
-                collection = session.get_collection(collection_name=(collection_prefix + collection_name))
+                collection = session.collections.get(name=(collection_prefix + collection_name))
 
             except NoSearchResults:
                 collection = None
@@ -171,8 +168,7 @@ def make_smart_collection(
             
         if not isinstance(collection, KomgaErrorResponse) and collection != None:
             _add_item_poster(
-                session,
-                item_type = 'collections',
+                session.collections,
                 item = collection,
                 file_name = collection_name,
                 item_category = collection_category,

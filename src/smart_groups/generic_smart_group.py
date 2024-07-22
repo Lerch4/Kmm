@@ -3,7 +3,7 @@ from requests import Response
 from komgapy.util import remove_duplicates
 from PIL import Image
 from smart_groups.util import *
-
+from komgapy.wrapper.controllers import *
 from komgapy import (
     KomgaSession,
     KomgaErrorResponse,
@@ -19,86 +19,8 @@ from print_outputs import(
 )
 
 
-def make_smart_user_generated_item(
-        session,
-        item_type: str,
-        item_name: str,
-        search_params: dict = None,
-        item_prefix: str = None,
-        item_category: str = None,
-        content_id_list: list = None,
-        blacklisted_content_ids: list = None,
-        blacklisted_search_params: dict = None,
-        ordered: bool = False,
-        overwrite: bool = False,
-        item_categories = None,
-        asset_dir = None
-        ):
-        '''
-        OLD AND OUTDATED
-        ------------------
-        Create or update collection or readlist based on metadata of series or books
-
-        :param item_type: "collections" or "readlists"
-        :param search_params: dictionary of search parameters available for item type
-        :param item_prefix: Prefix to be added to name for sorting
-        :param item_name: Item name
-        :param item_category: Category of item to be used for sorting, will be overridden by item_prefix
-        :param content_id_list: List of content ids of content to be added
-        :param blacklisted_content_ids: List of content ids of content to be excluded
-        :param blacklisted_search_params: Search parameters for content to be excluded
-        :param ordered: True keeps order while false sorts by alpha
-        :param overwrite: True replaces old content with new content while false appends new content to old content
-        '''
-        # trim item name
-        item_name = item_name.strip()
-
-
-        if search_params == None:
-            search_params = {'search': f'"{item_name}"'}
-        
-        if 'unpaged' not in search_params:
-            search_params['unpaged'] = True 
-
-
-        match item_type:
-            case 'collections':
-                # item_categories = collection_categories
-                content_type = 'series'
-
-            case 'readlists':
-                # item_categories = readlist_categories
-                content_type = 'books'
-
-            case _:
-                raise Exception('Incopatable item type')
-    
-        
-
-        item_prefix = make_prefix(item_prefix, item_category, item_categories)
-
-
-        content_list = session._search(content_type, search_params).content
-
-
-        content_id_list = make_id_list(content_list)
-    
-
-        remove_blacklisted(session, content_type, content_id_list, blacklisted_content_ids, blacklisted_search_params)
-
-
-        # post collection and return collection data
-        item = _post_user_generated_item(session,item_type, item_name, content_id_list, item_prefix, ordered, overwrite)
-        if isinstance(item, Response):
-            print(item.text)
-
-        _add_item_poster(session,item_type=item_type, item = item, item_name = item_name, item_category = item_category, asset_dir=asset_dir)
-
-
-
 def _post_user_generated_item(
-        session: KomgaSession,
-        item_type: str,
+        controller: Readlists | Collections,
         item_name: str,
         content_list: list[str],
         item_prefix: str = '',
@@ -118,15 +40,18 @@ def _post_user_generated_item(
     '''
 
     # print_heading_from_item_type(item_type)
-    
+    if isinstance(controller, Readlists):
+        item_type = 'readlists'
+    elif isinstance(controller, Collections):
+        item_type = 'collections'
 
     item_data = make_user_generated_item_data(item_type, item_name, content_list, item_prefix, ordered)
 
 
-    response = session._add_new_user_generated_item(item_type, item_data)
+    response = controller.new(item_data)
 
 
-    item = update_if_item_already_exists(session, response, item_type, item_prefix + item_name, item_data, overwrite)
+    item = update_if_item_already_exists(controller, response, item_prefix + item_name, item_data, overwrite)
 
 
     print_item_data(item)
@@ -137,8 +62,7 @@ def _post_user_generated_item(
 
 
 def _add_item_poster(
-        session: KomgaSession,
-        item_type: str,
+        controller: Readlists | Collections,
         item: KomgaCollection| KomgaReadlist| KomgaBook| KomgaSeries,
         file_name: str,
         item_category: str,
@@ -151,15 +75,26 @@ def _add_item_poster(
     
     :param overlay_mode: 'no_asset', 'force', 'disable'
     '''
+
+    if isinstance(controller, Readlists):
+        item_type = 'readlists'
+    elif isinstance(controller, Collections):
+        item_type = 'collections'
+
+
     poster_dir = os.path.join(asset_dir, item_type)
         
-    if item_category != None and os.path.exists(f'{poster_dir}\\{item_category}'):
-        poster_dir += '\\' + item_category
+
+    if item_category != None and os.path.exists(os.path.join(poster_dir, item_category)):
+        poster_dir =os.path.join(poster_dir, item_category)
+
 
     poster_file_name = get_poster_file_name(file_name, poster_dir)
 
-    current_image = session._get_item_poster(item_type, item.id)
+
+    current_image = controller.poster(item.id)
     
+
     if poster_file_name != None:      
         print_has_poster_asset(True)
 
@@ -173,7 +108,7 @@ def _add_item_poster(
                 print('Using Overlay')
                 image = Image.open(poster_file_path)
                 image = add_overlay(overlay_path, image)
-                upload_image_object(session, item_type, item.id, image)
+                upload_image_object(controller, item_type, item.id, image)
                 return None
             
             else:
@@ -184,7 +119,7 @@ def _add_item_poster(
             print('Poster Already Uploaded')
 
         else:
-            session._update_item_poster(item_type,item.id, poster_file_path)
+            controller.update_poster(item.id, poster_file_path)
 
     else:
         print_has_poster_asset(False)
@@ -196,7 +131,7 @@ def _add_item_poster(
                 print('Using Overlay')
                 image = add_overlay(overlay_path, current_image)
                 if overlay_mode == 'force' or image._size != current_image._size:
-                      upload_image_object(session, item_type, item.id, image)  
+                      upload_image_object(controller, item.id, image)  
 
                 else:
                     print('Already has custom poster')
@@ -207,8 +142,7 @@ def _add_item_poster(
 
 
 def _update_existing_item(
-        session: KomgaSession,
-        item_type: str| None,
+        controller: Readlists | Collections,
         data: dict,
         item: KomgaReadlist|KomgaCollection| None = None,
         item_id: str| None = None,
@@ -225,26 +159,24 @@ def _update_existing_item(
     if item == None:
 
         if item_id != None:
-            item = session._get_item(item_type, item_id)
+            item = controller.get(item_type, item_id)
 
         elif item_name != None:
-            item = session._get_item(item_type, item_name=item_name)
+            item = controller.get(item_type, item_name=item_name)
 
         else:
             raise Exception("No object, id, or name")
 
 
-    match item_type:
-        case 'readlists':
-            data_key = 'bookIds'
-            current_id_list = item.book_ids
-            
-        case 'collections':
-            data_key = 'seriesIds'
-            current_id_list = item.series_ids
-            
-        case _:
-            raise Exception('Incompatable item type')
+    if isinstance(controller, Readlists):
+        item_type = 'readlists'
+        data_key = 'bookIds'
+        current_id_list = item.book_ids        
+    elif isinstance(controller, Collections):
+        item_type = 'collections'
+        data_key = 'seriesIds'
+        current_id_list = item.series_ids  
+
 
     item_id = item.id
     id_list: list = data[data_key]
@@ -254,11 +186,12 @@ def _update_existing_item(
         data[data_key] = remove_duplicates(id_list)
 
     if sorted(data[data_key]) != sorted(current_id_list):
-        session._overwrite_existing_item(item_type, item_id, data)
+        r = controller.overwrite(item_type, item_id, data)
+        # print(r)
 
         print('Item Updated')
 
-        item = session._get_item(item_type, item_id)
+        item = controller.get(item_type, item_id)
     else:
 
         print('Nothing to Update')
@@ -270,9 +203,8 @@ def _update_existing_item(
 
 
 def update_if_item_already_exists(
-        session: KomgaSession,
+        controller: Readlists | Collections,
         response: KomgaCollection|KomgaReadlist|KomgaErrorResponse,
-        item_type: str,
         item_name: str,
         data: dict,
         overwrite: bool = False
@@ -288,9 +220,9 @@ def update_if_item_already_exists(
             if 'name already exists' in response.message:
                 print('Item Exists')
 
-                item = session._get_item(item_type,item_name=item_name)
+                item = controller.get(name=item_name)
 
-                item = _update_existing_item(session, item_type, data, item, overwrite=overwrite)
+                item = _update_existing_item(controller, data, item, overwrite=overwrite)
 
             else:
                 raise Exception(KomgaErrorResponse.message)
@@ -303,18 +235,18 @@ def update_if_item_already_exists(
         return item
 
 
-def content_list_from_search_params(session: KomgaSession, item_type: str, search_params: dict):
+def content_list_from_search_params(controller: Books | Series, search_params: dict):
     if isinstance(search_params, list):
         content_list = []
         for sp in search_params:
             if 'unpaged' not in sp:
                 sp['unpaged'] = True 
-            content_list.extend(session._search(item_type, sp).content)
+            content_list.extend(controller.search(sp).content)
 
     else:
         if 'unpaged' not in search_params:
             search_params['unpaged'] = True 
-        content_list = session._search(item_type, search_params).content
+        content_list = controller.search( search_params).content
 
     return content_list
 
@@ -344,11 +276,11 @@ def add_overlay(overlay_path: str, current_image: Image.Image):
     return image
 
 
-def upload_image_object(session: KomgaSession, item_type: str, item_id: str, image: Image.Image):
+def upload_image_object(controller: Readlists|Collections, item_id: str, image: Image.Image):
     if not os.path.exists('temp'):
         os.mkdir('temp')
     image.save('temp/temp.png')
-    session._update_item_poster(item_type, item_id, 'temp/temp.png')
+    controller.update_poster(item_id, 'temp/temp.png')
     os.remove('temp/temp.png')
     os.removedirs('temp')
 
@@ -357,9 +289,9 @@ def determine_poster_file_path(item_type: str, item_category: str, asset_dir: st
 
     poster_dir = os.path.join(asset_dir, item_type)
     
-    if item_category != None and os.path.exists(f'{poster_dir}\\{item_category}'):
-        poster_dir += '\\' + item_category
-
+    if item_category != None and os.path.exists(os.path.join(poster_dir, item_category)):
+        poster_dir = os.path.join(poster_dir, item_category)
+    
     return poster_dir
 
 
